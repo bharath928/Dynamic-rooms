@@ -35,11 +35,13 @@ const floorSchema = new mongoose.Schema({
         required:true,
         default:""
     },
-    no_of_class:{
-        type:Number,
-        required:true,
-        default:0
-    },
+    // no_of_class:{
+    //     type:Number,
+    //     required:true,
+    //     default:0
+    // },
+
+    //No of rooms = rooms.length...
     rooms:{
         type:[roomSchema],
         required:true,

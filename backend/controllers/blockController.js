@@ -12,10 +12,14 @@ const createBlock = async (req,res)=>{
     }
 }
 
+const createFloor = async (req,res)=>{
+    
+}
+
 const getBlockDetails = async (req,res)=>{
     try{
         const result = await block.find();
-        res.status(200).json(JSON.stringify(result))
+        res.status(200).json(result)
     }
     catch(err){
         console.error(err)
