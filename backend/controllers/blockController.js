@@ -12,9 +12,9 @@ const createBlock = async (req,res)=>{
     }
 }
 
-const createFloor = async (req,res)=>{
+// const createFloor = async (req,res)=>{
     
-}
+// }
 
 const getBlockDetails = async (req,res)=>{
     try{
@@ -27,10 +27,14 @@ const getBlockDetails = async (req,res)=>{
     }
 }
 
+
 const getBlockDetailsbyId = async (req,res)=>{
     const {id }= req.params;
     try{
         const result = await block.findById(id);
+        if(!result) {
+            console.log("result not found..")
+        }
         res.status(200).json(result)
     }
     catch(err){
@@ -51,4 +55,33 @@ const deleteBlock = async (req,res)=>{
     }
 }
 
-module.exports = {createBlock,getBlockDetails,getBlockDetailsbyId,deleteBlock};
+//Floor Details...
+
+const updateBlockDetailsbyId = async(req,res)=>{
+    const { id } = req.params; // Block ID from the route parameter
+  const { floor_name } = req.body; // Floor name from the request body
+
+  if (!floor_name) {
+    return res.status(400).json({ msg: "Floor name is required" });
+  }
+
+  try {
+    // Find the block by ID and add the new floor to the `floors` array
+    const updatedBlock = await block.findByIdAndUpdate(
+      id,
+      { $push: { floors: { floor_name } } }, // Add the new floor object
+      { new: true } // Return the updated block after the operation
+    );
+
+    if (!updatedBlock) {
+      return res.status(404).json({ msg: "Block not found" });
+    }
+
+    res.status(200).json(updatedBlock);
+  } catch (error) {
+    console.error("Error adding floor:", error);
+    res.status(500).json({ msg: "Internal server error" });
+  }
+}
+
+module.exports = {createBlock,getBlockDetails,getBlockDetailsbyId,deleteBlock,updateBlockDetailsbyId};
