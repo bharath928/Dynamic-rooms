@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
-// import "./FloorPage.css";
+import "./FloorPage.css";
 
 const Floorpage = () => {
   const { state } = useLocation();
@@ -21,6 +21,7 @@ const fetchBlockData = async () => {
       setErr("Failed to fetch updated block data");
       console.error(error);
     }
+    fetchBlockData()
   };
 
   const handleAddFloor = async (e) => {
@@ -46,6 +47,7 @@ const fetchBlockData = async () => {
       <h1>Floor Page for Block: {block.block_name}</h1>
       {err && <p className="error">Error: {err}</p>}
 
+      {/* Add Floors to the Block */}
       <div className="floor-input">
         <form action="">
           <input
@@ -61,7 +63,7 @@ const fetchBlockData = async () => {
       <div className="floor-details">
         {block.floors.map((e,index)=>(
           <div className="floor-text" key={index}>
-            <h1>FloorName:{e.floor_name}</h1>
+            <h1>{e.floor_name}</h1>
           </div>
         ))}
       </div>
@@ -70,3 +72,46 @@ const fetchBlockData = async () => {
 };
 
 export default Floorpage;
+
+// import React, { useState } from "react";
+
+// const FloorDetails = ({ block }) => {
+//   const [selectedFloor, setSelectedFloor] = useState(null); // Track the selected floor
+
+//   const handleFloorClick = (floorId) => {
+//     setSelectedFloor((prev) => (prev === floorId ? null : floorId)); // Toggle selection
+//   };
+
+//   return (
+//     <div className="floor-details">
+//       {/* Floors displayed in a row */}
+//       <div className="floors-row">
+//         {block.floors.map((floor, index) => (
+//           <div
+//             key={index}
+//             className={`floor-text ${selectedFloor === floor._id ? "active" : ""}`}
+//             onClick={() => handleFloorClick(floor._id)}
+//           >
+//             <h1>{floor.floor_name}</h1>
+//           </div>
+//         ))}
+//       </div>
+
+//       {/* Display rooms of the selected floor */}
+//       {block.floors.map((floor) => (
+//         <div
+//           key={floor._id}
+//           className={`rooms-container ${selectedFloor === floor._id ? "visible" : "hidden"}`}
+//         >
+//           {floor.rooms.map((room, index) => (
+//             <div key={index} className="room">
+//               <p>{room.room_name}</p>
+//             </div>
+//           ))}
+//         </div>
+//       ))}
+//     </div>
+//   );
+// };
+
+// export default FloorDetails;

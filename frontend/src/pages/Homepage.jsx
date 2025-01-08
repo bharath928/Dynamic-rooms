@@ -35,6 +35,17 @@ const Homepage = () => {
     return <div className="error">Error occurred: {err}</div>;
   }
 
+  const deleteBlock = async(e)=>{
+    try{
+      const response = await axios.delete(`http://localhost:5000/block/delete-data/${e._id}`)
+      navigate("/")
+      alert(`${e.floor_name} deleted.`)
+      // fetchDetails();
+    }catch(err){
+      alert("somthing went wrong..")
+    }
+  }
+
   return (
     <div className="container">
       <button
@@ -56,8 +67,10 @@ const Homepage = () => {
             >
               <div className="img"></div>
               <h4>{e.block_name}</h4>
-              <p>No of Floors: {e.no_of_floor}</p>
+              <p>No of Floors: {e.floors.length}</p>
+              {/* <input type="button" value="Delete" onClick={() => deleteBlock(e)}/> */}
             </div>
+            
           ))}
         </div>
       )}
