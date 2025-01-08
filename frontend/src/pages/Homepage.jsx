@@ -9,6 +9,19 @@ const Homepage = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
+  // useEffect(()=>{
+  //   const shortcutKeys = async(event)=>{
+  //       if(event.ctrlKey && event.altKey &&event.key==="a"){
+  //         navigate("/add-block");
+  //       }  
+
+  //       window.addEventListener('keydown',shortcutKeys);
+  //       return()=>{
+  //         window.removeEventListener('keydown',shortcutKeys)
+  //       }
+  //   }
+  // },[])
+
   useEffect(() => {
     const fetchDetails = async () => {
       try {
@@ -35,16 +48,27 @@ const Homepage = () => {
     return <div className="error">Error occurred: {err}</div>;
   }
 
-  const deleteBlock = async(e)=>{
-    try{
-      const response = await axios.delete(`http://localhost:5000/block/delete-data/${e._id}`)
-      navigate("/")
-      alert(`${e.floor_name} deleted.`)
-      // fetchDetails();
-    }catch(err){
-      alert("somthing went wrong..")
+  const deleteBlock = async (e) => {
+    try {
+      // Display a confirmation dialog
+      const isConfirmed = window.confirm(`Are you sure you want to delete ${e.block_name}?`);
+  
+      if (!isConfirmed) {
+        return; // Exit the function if the user cancels
+      }
+  
+      // Proceed with the deletion
+      const response = await axios.delete(`http://localhost:5000/block/delete-data/${e._id}`);
+      alert(`${e.block_name} has been deleted successfully`);
+
+      // Fetch the updated list of blocks
+      const details = await axios.get("http://localhost:5000/block/get-data");
+      setBlock(details.data);
+    } catch (err) {
+      alert("Something went wrong while deleting the block.");
     }
-  }
+  };
+  
 
   return (
     <div className="container">
@@ -53,22 +77,27 @@ const Homepage = () => {
         onClick={() => navigate("/add-block")}
       >
         Add Block
-      </button>
+      </button> 
       <h1>Home Page</h1>
       {!block.length ? (
         <h1>No data found...</h1>
       ) : (
         <div className="card-container">
           {block.map((e, index) => (
-            <div
-              key={index}
-              className="card"
-              onClick={() => navigate(`/get-data/${e.id}`, { state: { block: e } })}
-            >
-              <div className="img"></div>
-              <h4>{e.block_name}</h4>
-              <p>No of Floors: {e.floors.length}</p>
-              {/* <input type="button" value="Delete" onClick={() => deleteBlock(e)}/> */}
+            <div className="card" key={index}>
+                <div
+                className='card-content'
+                onClick={() => navigate(`/get-data/${e.id}`, { state: { block: e } })}
+              >
+                <div className="img"></div>
+                <h4>{e.block_name}</h4>
+                <p>No of Floors: {e.floors.length}</p>
+                {/* <input type="button" value="Delete" onClick={() => deleteBlock(e)}/> */}
+              </div>
+
+              <div className='card-button'>
+                <input type="button" value="Delete" onClick={()=>{deleteBlock(e)}}/>
+              </div>
             </div>
             
           ))}

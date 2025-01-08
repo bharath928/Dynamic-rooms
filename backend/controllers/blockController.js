@@ -12,9 +12,6 @@ const createBlock = async (req,res)=>{
     }
 }
 
-// const createFloor = async (req,res)=>{
-    
-// }
 
 const getBlockDetails = async (req,res)=>{
     try{
@@ -55,6 +52,7 @@ const deleteBlock = async (req,res)=>{
     }
 }
 
+
 //Floor Details...
 
 const updateBlockDetailsbyId = async(req,res)=>{
@@ -84,4 +82,34 @@ const updateBlockDetailsbyId = async(req,res)=>{
   }
 }
 
-module.exports = {createBlock,getBlockDetails,getBlockDetailsbyId,deleteBlock,updateBlockDetailsbyId};
+//Rooms Details...
+const updateRoomDetailsById = async(req,res)=>{
+    try{
+        const {blockid,floorid} = req.params;
+       const { room_id,room_name,room_type,room_capacity } = req.body;
+
+    const blockDetails = block.findById(blockid);
+
+    if(!blockDetails)
+        return res.status(400).end("something went wronfg")
+
+    // const floorDetails = blockDetails.floors.findById(floorid)
+    
+    // if(!floorDetails)
+    //     return res.status(400).end("something went wronfg")
+
+    const updatedBlock = await blockDetails.floors.findByIdAndUpdate(
+        floorid,
+        { $push: { rooms: { room_id,room_name,room_type,room_capacity } } }, // Add the new floor object
+        { new: true } // Return the updated block after the operation
+      );
+
+    if(!updatedBlock)
+        return res.status(400).end("something went wronfg")
+    }catch(err){
+        console.log(err)
+    }
+
+}
+
+module.exports = {createBlock,getBlockDetails,getBlockDetailsbyId,deleteBlock,updateBlockDetailsbyId,updateRoomDetailsById};

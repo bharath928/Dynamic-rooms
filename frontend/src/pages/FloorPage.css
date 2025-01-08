@@ -15,7 +15,8 @@
   
   .floor-text {
     padding: 1rem;
-    border: 1px solid #ccc;
+    border: none;
+    border-bottom: 1px solid #000;
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.3s ease;

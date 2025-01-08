@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
 import "./FloorPage.css";
@@ -12,8 +12,8 @@ const [block, setBlock] = useState(state.block);
   const [floorName, setFloorName] = useState("");
   const [err, setErr] = useState("");
 
-
-const fetchBlockData = async () => {
+useEffect(()=>{
+  const fetchBlockData = async () => {
     try {
     const responsive = await axios.get(`http://localhost:5000/block/get-data/${block._id}`);
       setBlock(responsive.data); // Update floors with data from the database
@@ -23,6 +23,7 @@ const fetchBlockData = async () => {
     }
     fetchBlockData()
   };
+},[])
 
   const handleAddFloor = async (e) => {
     e.preventDefault()
@@ -33,9 +34,9 @@ const fetchBlockData = async () => {
       });
       // setFloorData((prev) => [...prev, response.data]);
       setFloorName(""); // Reset input
-      // console.log(block.floors.length)
-      fetchBlockData()
-      // console.log(Block)
+      
+      const responsive = await axios.get(`http://localhost:5000/block/get-data/${block._id}`);
+      setBlock(responsive.data);
     } catch (error) {
       setErr(error.message);
       console.log(error)
@@ -48,25 +49,26 @@ const fetchBlockData = async () => {
       {err && <p className="error">Error: {err}</p>}
 
       {/* Add Floors to the Block */}
-      <div className="floor-input">
-        <form action="">
-          <input
-            type="text"
-            value={floorName}
-            onChange={(e) => setFloorName(e.target.value)}
-            placeholder="Enter floor name"
-          />
-          <button onClick={handleAddFloor}>Add Floor</button>
-        </form>
-      </div>
+        <div className="floor-input">
+          <form action="">
+            <input
+              type="text"
+              value={floorName}
+              onChange={(e) => setFloorName(e.target.value)}
+              placeholder="Enter floor name"
+            />
+            <button onClick={handleAddFloor}>Add Floor</button>
+          </form>
+        </div>
 
-      <div className="floor-details">
-        {block.floors.map((e,index)=>(
-          <div className="floor-text" key={index}>
-            <h1>{e.floor_name}</h1>
-          </div>
-        ))}
-      </div>
+        <div className="floor-details">
+          {block.floors.map((e,index)=>(
+            <div className="floor-text" key={index}>
+              <h1>{e.floor_name}</h1>
+            </div>
+          ))}
+        </div>
+        
     </div> 
   );
 };
