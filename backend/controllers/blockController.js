@@ -82,34 +82,45 @@ const updateBlockDetailsbyId = async(req,res)=>{
   }
 }
 
+
 //Rooms Details...
 const updateRoomDetailsById = async(req,res)=>{
     try{
         const {blockid,floorid} = req.params;
-       const { room_id,room_name,room_type,room_capacity } = req.body;
+        const { room_id,room_name,room_type,room_capacity } = req.body;
 
-    const blockDetails = block.findById(blockid);
+        const blockDetails = await block.findById(blockid);
 
-    if(!blockDetails)
-        return res.status(400).end("something went wronfg")
+        if(!blockDetails)
+            return res.status(400).end("something went wronfg")
 
-    // const floorDetails = blockDetails.floors.findById(floorid)
-    
-    // if(!floorDetails)
-    //     return res.status(400).end("something went wronfg")
+        // const floorDetails = blockDetails.floors.findById(floorid)
+        
+        // if(!floorDetails)
+        //     return res.status(400).end("something went wronfg")
+        // if(!updatedBlock)
+        //     return res.status(400).end("something went wronfg")
 
-    const updatedBlock = await blockDetails.floors.findByIdAndUpdate(
-        floorid,
-        { $push: { rooms: { room_id,room_name,room_type,room_capacity } } }, // Add the new floor object
-        { new: true } // Return the updated block after the operation
-      );
+        const floorDetails = blockDetails.floors.id(floorid)
 
-    if(!updatedBlock)
-        return res.status(400).end("something went wronfg")
+
+        floorDetails.rooms.push({
+            room_id:room_id,
+            room_name:room_name,
+            room_type:room_type,
+            room_capacity:room_capacity,
+        })
+
+        const updatedBlock = await blockDetails.save();
+
+        if(!updatedBlock){
+            alert("something went wrong")
+            console.log(err)
+        }
+        res.status(200).json(updatedBlock)
     }catch(err){
         console.log(err)
     }
-
 }
 
 module.exports = {createBlock,getBlockDetails,getBlockDetailsbyId,deleteBlock,updateBlockDetailsbyId,updateRoomDetailsById};

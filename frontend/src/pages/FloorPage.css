@@ -1,58 +1,57 @@
 .floor-details {
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-around;
-    align-items: center;
-  }
-  
-  .floors-row {
-    display: flex;
-    gap: 1rem; /* Space between floors */
-    justify-content: center;
-    margin-bottom: 1rem;
-  }
-  
-  .floor-text {
-    padding: 1rem;
-    border: none;
-    border-bottom: 1px solid #000;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-  }
-  
-  .floor-text:hover {
-    background-color: #f0f0f0;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  }
-  
-  .floor-text.active {
-    background-color: #d1e7dd;
-    border-color: #0f5132;
-    color: #0f5132;
-  }
-  
-  .rooms-container {
-    display: none; /* Hide rooms by default */
-    width: 100%;
-    padding: 1rem;
-    margin-top: 1rem;
-    background-color: #f9f9f9;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-  }
-  
-  .rooms-container.visible {
-    display: block; /* Show only when active */
-  }
-  
-  .room {
-    padding: 0.5rem;
-    border-bottom: 1px solid #eee;
-  }
-  
-  .room:last-child {
-    border-bottom: none;
-  }
-  
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.floors-row {
+  display: flex;
+  gap: 1rem; /* Space between floors */
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.floor-text {
+  padding: 1rem;
+  border: none;
+  border-bottom: 1px solid #000;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.floor-text:hover {
+  background-color: #f0f0f0;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.floor-text.active {
+  background-color: #d1e7dd;
+  border-color: #0f5132;
+  color: #0f5132;
+}
+
+.rooms-container {
+  display: none; /* Hide rooms by default */
+  width: 100%;
+  padding: 1rem;
+  margin-top: 1rem;
+  background-color: #f9f9f9;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.rooms-container.visible {
+  display: block; /* Show only when active */
+}
+
+.room {
+  padding: 0.5rem;
+  border-bottom: 1px solid #eee;
+}
+
+.room:last-child {
+  border-bottom: none;
+}

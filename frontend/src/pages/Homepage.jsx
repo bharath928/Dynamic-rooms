@@ -87,7 +87,7 @@ const Homepage = () => {
             <div className="card" key={index}>
                 <div
                 className='card-content'
-                onClick={() => navigate(`/get-data/${e.id}`, { state: { block: e } })}
+                onClick={() => navigate(`/get-data/${e.block_name}`, { state: { block: e } })}
               >
                 <div className="img"></div>
                 <h4>{e.block_name}</h4>

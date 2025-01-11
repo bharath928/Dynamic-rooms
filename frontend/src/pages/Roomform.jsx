@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
-const Roomform = ({ floorId, blockId, onClose, refreshBlockData }) => {
+const Roomform = ({ floorId, blockId, onClose, }) => {
   const [roomId, setRoomId] = useState("");
   const [roomName, setRoomName] = useState("");
   const [roomType, setRoomType] = useState("");
   const [roomCapacity, setRoomCapacity] = useState(0);
   const [err, setErr] = useState("");
+  const navigate = useNavigate();
 
   const handleAddRoom = async (e) => {
     e.preventDefault();
@@ -20,8 +22,10 @@ const Roomform = ({ floorId, blockId, onClose, refreshBlockData }) => {
       setRoomName("");
       setRoomType("");
       setRoomCapacity(0);
-      refreshBlockData(); // Refresh block data after adding room
-      onClose(); // Close the form
+      // refreshBlockData(); // Refresh block data after adding room
+      // onClose(); // Close the form
+      alert("Form successfully added..")
+      navigate("/get-data/:${blockId}")
     } catch (error) {
       setErr("Failed to add room");
       console.error(error);
@@ -34,7 +38,7 @@ const Roomform = ({ floorId, blockId, onClose, refreshBlockData }) => {
       {err && <p className="error">Error: {err}</p>}
       <form>
         <input
-          type="number"
+          type="text"
           value={roomId}
           onChange={(e) => setRoomId(e.target.value)}
           placeholder="Enter room Id"
@@ -72,8 +76,3 @@ const Roomform = ({ floorId, blockId, onClose, refreshBlockData }) => {
 
 export default Roomform;
 
-// classroom
-// faculty room
-// labs
-// seminars
-// other
