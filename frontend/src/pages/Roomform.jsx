@@ -1,14 +1,19 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate,useLocation} from "react-router-dom";
 
-const Roomform = ({ floorId, blockId, onClose, }) => {
+const Roomform = () => {
   const [roomId, setRoomId] = useState("");
   const [roomName, setRoomName] = useState("");
   const [roomType, setRoomType] = useState("");
-  const [roomCapacity, setRoomCapacity] = useState(0);
+  const [roomCapacity, setRoomCapacity] = useState(null);
   const [err, setErr] = useState("");
   const navigate = useNavigate();
+
+  const {state} = useLocation();
+  // const {floorid:floorId,blockid:blockId} = state;
+  const [floorId,setfloorId] = useState(state.floorid)
+  const [blockId,setblockId] = useState(state.blockid)
 
   const handleAddRoom = async (e) => {
     e.preventDefault();
@@ -21,7 +26,7 @@ const Roomform = ({ floorId, blockId, onClose, }) => {
       });
       setRoomName("");
       setRoomType("");
-      setRoomCapacity(0);
+      setRoomCapacity(null);
       // refreshBlockData(); // Refresh block data after adding room
       // onClose(); // Close the form
       alert("Form successfully added..")
@@ -66,9 +71,9 @@ const Roomform = ({ floorId, blockId, onClose, }) => {
           required
         />
         <button onClick={handleAddRoom}>Add Room</button>
-        <button type="button" onClick={onClose}>
+        {/* <button type="button" onClick={onClose}>
           Cancel
-        </button>
+        </button> */}
       </form>
     </div>
   );
