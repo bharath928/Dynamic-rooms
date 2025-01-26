@@ -11,7 +11,7 @@ const App = () => {
         <Routes>
           <Route path="/" element={<Homepage />} />
           <Route path="/add-block" element={<Blockform />} />
-          <Route path="/get-data/:blockId" element={<Floorpage />} />
+          <Route path="/get-data/:blockname" element={<Floorpage />} />
           <Route path="/get-data/:blockId/:floorname" element={<Roomform/>}/>
         </Routes>
     </div>

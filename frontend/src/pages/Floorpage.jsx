@@ -55,7 +55,7 @@ const Floorpage = () => {
   };
 
   const addRooms = ()=>{
-    navigate(`/get-data/${block.block_name}/${floorid.floor_name}, {state:{floorid:${floorid._id}},blockid:${block._id}}`);
+    navigate(`/get-data/${block.block_name}/${floorid.floor_name}`,{state:{floor:floorid,Block:block}});
   }
 
   return (

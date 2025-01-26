@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate,useLocation} from "react-router-dom";
 
@@ -12,13 +12,17 @@ const Roomform = () => {
 
   const {state} = useLocation();
   // const {floorid:floorId,blockid:blockId} = state;
-  const [floorId,setfloorId] = useState(state.floorid)
-  const [blockId,setblockId] = useState(state.blockid)
+  const [floor,setfloorId] = useState(state.floor)
+  const [Block,setblockId] = useState(state.Block)
+
+  useEffect(()=>{
+    setRoomId(floor.floor_name)
+  },[])
 
   const handleAddRoom = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(`http://localhost:5000/block/floor/room/${blockId}/${floorId}`, {
+      await axios.post(`http://localhost:5000/block/floors/room/${Block._id}/${floor._id}`, {
         room_id: roomId,
         room_name: roomName,
         room_type: roomType,
@@ -30,7 +34,7 @@ const Roomform = () => {
       // refreshBlockData(); // Refresh block data after adding room
       // onClose(); // Close the form
       alert("Form successfully added..")
-      navigate("/get-data/:${blockId}")
+      navigate(`/get-data/${Block.block_name}`,{state:{block:Block}})
     } catch (error) {
       setErr("Failed to add room");
       console.error(error);
