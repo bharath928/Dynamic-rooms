@@ -90,7 +90,7 @@ const Homepage = () => {
                 onClick={() => navigate(`/get-data/${e.block_name}`, { state: { block: e } })}
               >
                 <div className="img"></div>
-                <h4>{e.block_name}</h4>
+                <h4>{e.block_name.toUpperCase()}</h4>
                 <p>No of Floors: {e.floors.length}</p>
                 {/* <input type="button" value="Delete" onClick={() => deleteBlock(e)}/> */}
               </div>

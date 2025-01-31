@@ -14,6 +14,7 @@ router.delete("/delete-data/:id",blockController.deleteBlock)
 router.post("/floor/:id",blockController.updateBlockDetailsbyId)
 
 //Room Routes..
-router.post("/floors/room/:blockid/:floorid",blockController.updateRoomDetailsById)
+router.post("/floors/room/:blockid/:floorid",blockController.addroomDetails)
+router.put("/floors/room/:blockid/:floorid/:roomid",blockController.updateRoomDetails)
 
 module.exports = router

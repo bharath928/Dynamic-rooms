@@ -13,6 +13,7 @@ const App = () => {
           <Route path="/add-block" element={<Blockform />} />
           <Route path="/get-data/:blockname" element={<Floorpage />} />
           <Route path="/get-data/:blockId/:floorname" element={<Roomform/>}/>
+          <Route path=''/>
         </Routes>
     </div>
   )

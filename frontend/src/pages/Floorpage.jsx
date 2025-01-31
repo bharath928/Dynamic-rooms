@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 const Floorpage = () => {
   const { state } = useLocation();
   const [block, setBlock] = useState(state.block);
-  const [floorid,setfloorid] = useState("");//floor details from the database....
+  const [floorid,setfloorid] = useState(null);//floor details from the database....
 
   const [floorName, setFloorName] = useState("");//DATA from the form...
   const [roomdata, setRoomData] = useState([]);
@@ -49,7 +49,8 @@ const Floorpage = () => {
   };
 
   const displayRoom = (floor) => {
-    // console.log(floor.rooms)
+    // if(null)
+    //   console.log(floor)
     setRoomData(floor.rooms)
     setfloorid(floor)
   };
@@ -57,6 +58,10 @@ const Floorpage = () => {
   const addRooms = ()=>{
     navigate(`/get-data/${block.block_name}/${floorid.floor_name}`,{state:{floor:floorid,Block:block}});
   }
+
+  // const modifyRoomDetails = ()=>{
+  //   navigate(`/get-data/${block.block_name}/${floorid.floor_name}`)
+  // }
 
   return (
     <div className="floor-form">
@@ -76,6 +81,7 @@ const Floorpage = () => {
         </form>
       </div>
 
+      {/* Displaying the floor details */}
       <div className="floor-details">
         {block.floors.map((floor, index) => (
           <div
@@ -91,30 +97,36 @@ const Floorpage = () => {
         ))}
       </div>
 
-
-      {setfloorid &&
-        <button onClick={addRooms}>Add Room</button>
+        
+      {floorid &&
+        (
+          <div>
+            <button onClick={addRooms}>Add Room to {floorid.floor_name.toUpperCase()}</button>
+            {roomdata.length > 0 ? (
+              <div className="room-details">
+                <h2>Rooms:</h2>
+                  {roomdata.map((room, index) => (
+                    <div key={index} className="room">
+                      <p>{room.room_id}</p>
+                      <h3>{room.room_name}</h3>
+                      <p>{room.room_type}</p>
+                      <p>{room.room_capacity}</p>
+                      {/* <button onClick={modifyRoomDetails}>Modify</button> */}
+                    </div>
+                  ))}
+              </div>
+            ) : (
+              <div>
+                <p className="no-rooms-message">No rooms available for this floor.</p>          
+                {/* <button>Add Room</button> */}
+              </div>
+            )}
+          </div>
+        )
       }
 
       {/* Room Details Section */}
-      {roomdata.length > 0 ? (
-        <div className="room-details">
-          <h2>Rooms:</h2>
-            {roomdata.map((room, index) => (
-              <div key={index} className="room">
-                <p>ID: {room.room_id}</p>
-                <h3>Room Name:{room.room_name}</h3>
-                <p>Type: {room.room_type}</p>
-                <p>Capacity: {room.room_capacity}</p>
-              </div>
-            ))}
-        </div>
-      ) : (
-        <div>
-          <p className="no-rooms-message">No rooms available for this floor.</p>          
-          {/* <button>Add Room</button> */}
-        </div>
-      )}
+      
     </div>
   );
 };

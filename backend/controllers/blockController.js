@@ -84,7 +84,7 @@ const updateBlockDetailsbyId = async(req,res)=>{
 
 
 //Rooms Details...
-const updateRoomDetailsById = async(req,res)=>{
+const addroomDetails = async(req,res)=>{
     try{
         const {blockid,floorid} = req.params;
         const { room_id,room_name,room_type,room_capacity } = req.body;
@@ -93,17 +93,8 @@ const updateRoomDetailsById = async(req,res)=>{
 
         if(!blockDetails)
             return res.status(400).end("something went wronfg")
-
-        // const floorDetails = blockDetails.floors.findById(floorid)
         
-        // if(!floorDetails)
-        //     return res.status(400).end("something went wronfg")
-        // if(!updatedBlock)
-        //     return res.status(400).end("something went wronfg")
-
         const floorDetails = blockDetails.floors.id(floorid)
-
-
         floorDetails.rooms.push({
             room_id:room_id,
             room_name:room_name,
@@ -123,4 +114,36 @@ const updateRoomDetailsById = async(req,res)=>{
     }
 }
 
-module.exports = {createBlock,getBlockDetails,getBlockDetailsbyId,deleteBlock,updateBlockDetailsbyId,updateRoomDetailsById};
+const updateRoomDetails = async(req,res)=>{
+    try{
+        const {blockid,floorid,roomid} = req.params;
+        const {updatedRoomData } = req.body;
+
+        const updatedRoom = await block.findByIdAndUpdate(
+            {
+                _id:blockid,
+                "floors._id":floorid,
+                "floors.rooms._id":roomid,
+            },
+            {
+                $set: {
+                "floors.$[floor].rooms.$[room]": updatedRoomData, // Update only the matched room
+                },
+            },
+            {
+                new: true,
+                arrayFilters: [
+                { "floor._id": floorid }, // Filter the floor
+                { "room._id": roomid }, // Filter the specific room
+                ],
+            }
+        )
+
+        if (!updatedRoom) return res.status(404).json({ message: "Room not found" });
+            res.json(updatedRoom);
+        } catch (error) {
+          res.status(500).json({ error: error.message });
+        }
+}
+
+module.exports = {createBlock,getBlockDetails,getBlockDetailsbyId,deleteBlock,updateBlockDetailsbyId,addroomDetails,updateRoomDetails};
