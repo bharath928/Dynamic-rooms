@@ -5,7 +5,7 @@ import "./Blockform.css";
 
 const Blockform = () => {
   const [blockName, setBlockName] = useState("");
-  const [noOfFloors, setNoOfFloors] = useState("");
+  // const [noOfFloors, setNoOfFloors] = useState("");
   const [err, setErr] = useState("");
   const navigate = useNavigate();
 
@@ -14,7 +14,7 @@ const Blockform = () => {
     try {
       await axios.post("http://localhost:5000/block/add-data", {
         block_name: blockName,
-        no_of_floor: noOfFloors,
+        // no_of_floor: noOfFloors,
       });
       navigate("/"); // Navigate back to homepage after successful submission
     } catch (err) {
@@ -36,7 +36,7 @@ const Blockform = () => {
             required
           />
         </label>
-        <label>
+        {/* <label>
           Number of Floors:
           <input
             type="number"
@@ -44,7 +44,7 @@ const Blockform = () => {
             onChange={(e) => setNoOfFloors(e.target.value)}
             required
           />
-        </label>
+        </label> */}
         <button type="submit">Add Block</button>
       </form>
     </div>

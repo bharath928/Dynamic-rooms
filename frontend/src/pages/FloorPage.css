@@ -33,25 +33,19 @@
   color: #0f5132;
 }
 
-.rooms-container {
-  display: none; /* Hide rooms by default */
-  width: 100%;
-  padding: 1rem;
-  margin-top: 1rem;
-  background-color: #f9f9f9;
-  border: 1px solid #ccc;
-  border-radius: 8px;
+.room-details{
+  display: flex;
+  gap: 20px;
 }
 
-.rooms-container.visible {
-  display: block; /* Show only when active */
+.room-details .room{
+width: 150px;
+background-color: rgba(240, 224, 224, 0.9);
+padding: 20px;
 }
 
-.room {
-  padding: 0.5rem;
-  border-bottom: 1px solid #eee;
-}
-
-.room:last-child {
-  border-bottom: none;
+.room-details .modify{
+cursor: pointer;
+padding: 3px;
+margin-left: 7em ;
 }

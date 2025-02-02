@@ -4,6 +4,7 @@ import Homepage from './pages/Homepage'
 import Blockform from './pages/Blockform'
 import Floorpage from './pages/Floorpage';
 import Roomform from './pages/Roomform';
+import ModifyRoom from './pages/ModifyRoom';
 
 const App = () => {
   return (
@@ -13,7 +14,7 @@ const App = () => {
           <Route path="/add-block" element={<Blockform />} />
           <Route path="/get-data/:blockname" element={<Floorpage />} />
           <Route path="/get-data/:blockId/:floorname" element={<Roomform/>}/>
-          <Route path=''/>
+          <Route path="/get-data/:blockid/:floorname/modify/:roomname" element={<ModifyRoom/>}/>
         </Routes>
     </div>
   )

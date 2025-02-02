@@ -49,8 +49,6 @@ const Floorpage = () => {
   };
 
   const displayRoom = (floor) => {
-    // if(null)
-    //   console.log(floor)
     setRoomData(floor.rooms)
     setfloorid(floor)
   };
@@ -59,9 +57,10 @@ const Floorpage = () => {
     navigate(`/get-data/${block.block_name}/${floorid.floor_name}`,{state:{floor:floorid,Block:block}});
   }
 
-  // const modifyRoomDetails = ()=>{
-  //   navigate(`/get-data/${block.block_name}/${floorid.floor_name}`)
-  // }
+  const modifyRoom = (room)=>{
+    // console.log(room._id)
+    navigate(`/get-data/${block.block_name}/${floorid.floor_name}/modify/${room.room_name}`,{state:{Block:block,floor:floorid,Room:room}})
+  }
 
   return (
     <div className="floor-form">
@@ -102,16 +101,19 @@ const Floorpage = () => {
         (
           <div>
             <button onClick={addRooms}>Add Room to {floorid.floor_name.toUpperCase()}</button>
+            <h2>Rooms:</h2>
             {roomdata.length > 0 ? (
               <div className="room-details">
-                <h2>Rooms:</h2>
                   {roomdata.map((room, index) => (
                     <div key={index} className="room">
                       <p>{room.room_id}</p>
                       <h3>{room.room_name}</h3>
                       <p>{room.room_type}</p>
                       <p>{room.room_capacity}</p>
-                      {/* <button onClick={modifyRoomDetails}>Modify</button> */}
+                      <button onClick={(e)=>{
+                        e.stopPropagation();
+                        modifyRoom(room);
+                      }}>Modify</button>
                     </div>
                   ))}
               </div>

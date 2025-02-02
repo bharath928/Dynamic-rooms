@@ -114,36 +114,76 @@ const addroomDetails = async(req,res)=>{
     }
 }
 
-const updateRoomDetails = async(req,res)=>{
-    try{
-        const {blockid,floorid,roomid} = req.params;
-        const {updatedRoomData } = req.body;
+// const updateRoomDetails = async(req,res)=>{
+//     try{
+//         const {blockid,floorid,roomid} = req.params;
+//         const {updatedRoomData } = req.body;
 
-        const updatedRoom = await block.findByIdAndUpdate(
-            {
-                _id:blockid,
-                "floors._id":floorid,
-                "floors.rooms._id":roomid,
-            },
-            {
-                $set: {
-                "floors.$[floor].rooms.$[room]": updatedRoomData, // Update only the matched room
-                },
-            },
-            {
-                new: true,
-                arrayFilters: [
-                { "floor._id": floorid }, // Filter the floor
-                { "room._id": roomid }, // Filter the specific room
-                ],
-            }
-        )
+//         const updatedRoom = await block.findByIdAndUpdate(
+//             {
+//                 _id:blockid,
+//                 "floors._id":floorid,
+//                 "floors.rooms._id":roomid,
+//             },
+//             {
+//                 $set: {
+//                 "floors.$.rooms.$[room]": updatedRoomData, // Update only the matched room
+//                 },
+//             },
+//             {
+//                 new: true,
+//                 arrayFilters: [
+//                 // { "floors._id": floorid }, // Filter the floor
+//                 { "room._id": roomid }, // Filter the specific room
+//                 ],
+//             }
+//         )
 
-        if (!updatedRoom) return res.status(404).json({ message: "Room not found" });
-            res.json(updatedRoom);
-        } catch (error) {
-          res.status(500).json({ error: error.message });
+//         if (!updatedRoom) return res.status(404).json({ message: "Room not found" });
+//             res.json(updatedRoom);
+//         } catch (error) {
+//           res.status(500).json({ error: error.message });
+//         }
+// }
+
+const updateRoomDetails = async (req, res) => {
+    try {
+        const { blockid, floorid, roomid } = req.params; // Corrected .params()
+        const { room_id, room_name, room_type, room_capacity } = req.body;
+    
+        // Find the block by its blockid
+        const Block = await block.findById(blockid);
+        if (!Block) {
+            return res.status(404).json({ message: 'Block not found' });
         }
+    
+        // Find the floor by floorid
+        const floor = Block.floors.find(f => f._id.toString() === floorid);
+        if (!floor) {
+            return res.status(404).json({ message: 'Floor not found' });
+        }
+    
+        // Find the room by roomid
+        const room = floor.rooms.find(r => r._id.toString() === roomid);
+        if (!room) {
+            return res.status(404).json({ message: 'Room not found' });
+        }
+    
+        // Update room details
+        room.room_id = room_id || room.room_id; // Only update if a new value is provided
+        room.room_name = room_name || room.room_name;
+        room.room_type = room_type || room.room_type;
+        room.room_capacity = room_capacity || room.room_capacity;
+    
+        // Save the updated block document
+        await Block.save();
+    
+        // Return the updated room details as a response
+        res.status(200).json(room);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: 'Server error', error: err.message });
+    }
 }
 
-module.exports = {createBlock,getBlockDetails,getBlockDetailsbyId,deleteBlock,updateBlockDetailsbyId,addroomDetails,updateRoomDetails};
+module.exports = {createBlock,getBlockDetails,getBlockDetailsbyId,deleteBlock,updateBlockDetailsbyId,addroomDetails,updateRoomDetails}
