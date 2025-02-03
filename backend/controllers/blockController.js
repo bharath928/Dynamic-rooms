@@ -83,6 +83,25 @@ const updateBlockDetailsbyId = async(req,res)=>{
 }
 
 
+const deleteFloor = async(req,res)=>{
+    try{
+        const {blockId,floorId} = req.params;
+        const updatedBlock = await block.findOneAndUpdate(
+            { _id: blockId },
+            { $pull: { floors: { _id:floorId } } },
+            { new: true }
+          );
+          if(!updatedBlock)
+                res.status(404).end("error check this out")
+          res.status(200).json(updatedBlock)
+          
+    }catch(err){
+        res.status(500).end(err.message)
+    }
+    
+}
+
+
 //Rooms Details...
 const addroomDetails = async(req,res)=>{
     try{
@@ -114,37 +133,7 @@ const addroomDetails = async(req,res)=>{
     }
 }
 
-// const updateRoomDetails = async(req,res)=>{
-//     try{
-//         const {blockid,floorid,roomid} = req.params;
-//         const {updatedRoomData } = req.body;
 
-//         const updatedRoom = await block.findByIdAndUpdate(
-//             {
-//                 _id:blockid,
-//                 "floors._id":floorid,
-//                 "floors.rooms._id":roomid,
-//             },
-//             {
-//                 $set: {
-//                 "floors.$.rooms.$[room]": updatedRoomData, // Update only the matched room
-//                 },
-//             },
-//             {
-//                 new: true,
-//                 arrayFilters: [
-//                 // { "floors._id": floorid }, // Filter the floor
-//                 { "room._id": roomid }, // Filter the specific room
-//                 ],
-//             }
-//         )
-
-//         if (!updatedRoom) return res.status(404).json({ message: "Room not found" });
-//             res.json(updatedRoom);
-//         } catch (error) {
-//           res.status(500).json({ error: error.message });
-//         }
-// }
 
 const updateRoomDetails = async (req, res) => {
     try {
@@ -186,4 +175,4 @@ const updateRoomDetails = async (req, res) => {
     }
 }
 
-module.exports = {createBlock,getBlockDetails,getBlockDetailsbyId,deleteBlock,updateBlockDetailsbyId,addroomDetails,updateRoomDetails}
+module.exports = {createBlock,getBlockDetails,getBlockDetailsbyId,deleteBlock,updateBlockDetailsbyId,addroomDetails,updateRoomDetails,deleteFloor}
