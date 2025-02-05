@@ -1,3 +1,15 @@
+.deleteButton{
+  margin-left: 46em;
+  background-color: red;
+  cursor: pointer;
+  opacity: 0.6;
+}
+.deleteButton:hover{
+  opacity: 1;
+  background-color: red;
+
+}
+
 .floor-details {
   width: 100%;
   display: flex;

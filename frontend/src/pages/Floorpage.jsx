@@ -9,6 +9,7 @@ const Floorpage = () => {
   const { state } = useLocation();
   const [block, setBlock] = useState(state.block);
   const [floorid,setfloorid] = useState(null);//floor details from the database....
+  const [click,setclick] = useState(0);
 
   const [floorName, setFloorName] = useState("");//DATA from the form...
   const [roomdata, setRoomData] = useState([]);
@@ -17,6 +18,11 @@ const Floorpage = () => {
 
   // Fetch the data from the database
   useEffect(() => {
+    if(!state?.block){
+      navigate("/")
+      return
+    }
+
     const fetchBlockData = async () => {
       try {
         const response = await axios.get(
@@ -29,7 +35,7 @@ const Floorpage = () => {
       }
     };
     fetchBlockData();
-  }, [block._id]);
+  }, [state,navigate]);
 
   const handleAddFloor = async (e) => {
     e.preventDefault();
@@ -47,11 +53,40 @@ const Floorpage = () => {
       console.error(error);
     }
   };
+  
+  //Delete the floors....
+
+  useEffect(() => {
+    if (block) {
+      navigate(`/get-data/${block.block_name}`, { state: { block } });
+    }
+  }, [state,navigate]);
+
+  const deleteFloor = async()=>{
+    try{
+      if(click == 0)
+          return alert("Please select the floor to be deleted.....")
+      
+      window.confirm(`Do you want to Delete the floor ${floorid.floor_name}`)
+      await axios.delete(`http://localhost:5000/block/${block._id}/floor/${floorid._id}`)
+      
+      const response = await axios.get(
+        `http://localhost:5000/block/get-data/${block._id}`
+      );
+      setBlock(response.data);
+      // navigate(`/get-data/${block.block_name}`, { state: { block:response.data} })  
+    }catch(e){
+      alert("Something went wrong.....")
+    }
+  }
+
 
   const displayRoom = (floor) => {
+    setclick(1)
     setRoomData(floor.rooms)
     setfloorid(floor)
   };
+
 
   const addRooms = ()=>{
     navigate(`/get-data/${block.block_name}/${floorid.floor_name}`,{state:{floor:floorid,Block:block}});
@@ -77,6 +112,7 @@ const Floorpage = () => {
             placeholder="Enter floor name"
           />
           <button onClick={handleAddFloor}>Add Floor</button>
+        <button class="deleteButton" onClick={deleteFloor}>Delete</button>
         </form>
       </div>
 
