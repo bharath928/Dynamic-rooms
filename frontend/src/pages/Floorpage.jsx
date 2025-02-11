@@ -7,35 +7,48 @@ import { useNavigate } from "react-router-dom";
 
 const Floorpage = () => {
   const { state } = useLocation();
-  const [block, setBlock] = useState(state.block);
+  // const [block, setBlock] = useState(state?.block || null);
+  const [block, setBlock] = useState(() => {
+    return state?.block || JSON.parse(localStorage.getItem("block")) || null;
+  });
+  
   const [floorid,setfloorid] = useState(null);//floor details from the database....
-  const [click,setclick] = useState(0);
-
   const [floorName, setFloorName] = useState("");//DATA from the form...
   const [roomdata, setRoomData] = useState([]);
   const [err, setErr] = useState("");
   const navigate = useNavigate()
 
+  // block?localStorage.setItem("block",JSON.stringify(block)):setBlock(JSON.parse(localStorage.getItem("block")))
+
+  // useEffect(()=>{
+  //     block?localStorage.setItem("block",JSON.stringify(block)):setBlock(JSON.parse(localStorage.getItem("block")))
+  // },[])
+  // useEffect(() => {
+  //   if (!block) {
+  //     const storedBlock = localStorage.getItem("block");
+  //     if (storedBlock) {
+  //       setBlock(JSON.parse(storedBlock));
+  //     }
+  //   }
+  // }, []);
+  
+
   // Fetch the data from the database
   useEffect(() => {
-    if(!state?.block){
-      navigate("/")
-      return
-    }
-
     const fetchBlockData = async () => {
       try {
         const response = await axios.get(
           `http://localhost:5000/block/get-data/${block._id}`
         );
         setBlock(response.data); // Update block with data from the database
+        localStorage.setItem("block",JSON.stringify(block))
       } catch (error) {
         setErr("Failed to fetch updated block data");
         console.error(error);
       }
     };
     fetchBlockData();
-  }, [state,navigate]);
+  }, []);
 
   const handleAddFloor = async (e) => {
     e.preventDefault();
@@ -54,35 +67,54 @@ const Floorpage = () => {
     }
   };
   
-  //Delete the floors....
-
-  useEffect(() => {
-    if (block) {
-      navigate(`/get-data/${block.block_name}`, { state: { block } });
-    }
-  }, [state,navigate]);
-
   const deleteFloor = async()=>{
     try{
-      if(click == 0)
-          return alert("Please select the floor to be deleted.....")
-      
-      window.confirm(`Do you want to Delete the floor ${floorid.floor_name}`)
+      window.confirm("Do you want to delete")
       await axios.delete(`http://localhost:5000/block/${block._id}/floor/${floorid._id}`)
-      
-      const response = await axios.get(
-        `http://localhost:5000/block/get-data/${block._id}`
-      );
-      setBlock(response.data);
-      // navigate(`/get-data/${block.block_name}`, { state: { block:response.data} })  
+      const updatedData = await axios.get(`http://localhost:5000/block/get-data/${block._id}`)
+      if(!updatedData){
+        alert("Failed to delete the floor")
+      }
+
+      localStorage.setItem("block",JSON.stringify(updatedData.data))
+      alert("floor has been deleted")
+      navigate(`/get-data/${updatedData.data.block_name}`,{state:{block:updatedData.data}})
+      // console.log(updatedData.data)
     }catch(e){
-      alert("Something went wrong.....")
+      alert("something went wrong....")
     }
   }
 
+  // const deleteFloor = async () => {
+  //   if (!window.confirm("Do you want to delete this floor?")) return;
+  
+  //   try {
+  //     await axios.delete(`http://localhost:5000/block/${block._id}/floor/${floorid._id}`);
+  
+  //     // Fetch updated block data BEFORE navigating
+  //     const response = await axios.get(`http://localhost:5000/block/get-data/${block._id}`);
+  //     if (!response.data) {
+  //       alert("Failed to update block data after deletion.");
+  //       return;
+  //     }
+      
+  //     console.log(response.data)
+  //     setBlock(response.data);
+  //     localStorage.setItem("block", JSON.stringify(response.data));
+  
+  //     alert("Floor has been deleted");
+  
+  //     // Navigate only if block exists
+  //     navigate(`/get-data/${block.block_name}`, { state: { block: response.data } });
+  
+  //   } catch (e) {
+  //     alert("Something went wrong...");
+  //     console.error(e);
+  //   }
+  // };
+  
 
   const displayRoom = (floor) => {
-    setclick(1)
     setRoomData(floor.rooms)
     setfloorid(floor)
   };
@@ -96,6 +128,8 @@ const Floorpage = () => {
     // console.log(room._id)
     navigate(`/get-data/${block.block_name}/${floorid.floor_name}/modify/${room.room_name}`,{state:{Block:block,floor:floorid,Room:room}})
   }
+
+
 
   return (
     <div className="floor-form">
@@ -112,7 +146,7 @@ const Floorpage = () => {
             placeholder="Enter floor name"
           />
           <button onClick={handleAddFloor}>Add Floor</button>
-        <button class="deleteButton" onClick={deleteFloor}>Delete</button>
+        {floorid && <button class="deleteButton" onClick={deleteFloor}>Delete</button>}
         </form>
       </div>
 

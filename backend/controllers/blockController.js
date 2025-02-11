@@ -12,7 +12,6 @@ const createBlock = async (req,res)=>{
     }
 }
 
-
 const getBlockDetails = async (req,res)=>{
     try{
         const result = await block.find();
@@ -98,7 +97,6 @@ const deleteFloor = async(req,res)=>{
     }catch(err){
         res.status(500).end(err.message)
     }
-    
 }
 
 
