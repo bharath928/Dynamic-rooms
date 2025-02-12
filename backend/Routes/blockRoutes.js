@@ -18,4 +18,8 @@ router.delete("/:blockId/floor/:floorId",blockController.deleteFloor)
 router.post("/floors/room/:blockid/:floorid",blockController.addroomDetails)
 router.put("/floors/room/:blockid/:floorid/:roomid",blockController.updateRoomDetails)
 
+router.delete("/:blockId/floor/:floorId/room/:roomId", blockController.deleteRoom);
+
+//authentication routes..
+router.post("/register",blockController.userRegister);
 module.exports = router

@@ -67,4 +67,4 @@ const blockSchema = new mongoose.Schema({
     },
 })
 
-module.exports = mongoose.model("block",blockSchema)
+module.exports = mongoose.model("block",blockSchema);

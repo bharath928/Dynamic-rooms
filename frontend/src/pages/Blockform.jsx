@@ -16,7 +16,7 @@ const Blockform = () => {
         block_name: blockName,
         // no_of_floor: noOfFloors,
       });
-      navigate("/"); // Navigate back to homepage after successful submission
+      navigate("/"); 
     } catch (err) {
       setErr(err.message);
     }

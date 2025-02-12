@@ -45,7 +45,7 @@
   color: #0f5132;
 }
 
-.room-details{
+/* .room-details{
   display: flex;
   gap: 20px;
 }
@@ -60,4 +60,106 @@ padding: 20px;
 cursor: pointer;
 padding: 3px;
 margin-left: 7em ;
+} */
+
+.back_btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: linear-gradient(135deg, #4CAF50, #2E8B57); 
+
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
 }
+
+.back_btn:hover {
+  background: linear-gradient(135deg, #2E8B57, #4CAF50); 
+  transform: scale(1.05);
+}
+
+.back_btn:active {
+  transform: scale(0.95);
+}
+
+
+.room-details {
+  display: flex;
+  flex-wrap: wrap; /* Allows wrapping for better responsiveness */
+  gap: 20px;
+  justify-content: center; /* Centers the room cards */
+  padding: 20px;
+}
+
+.room-details .room {
+  width: 180px;
+  background: linear-gradient(135deg, #4CAF50, #2E7D32); /* Green gradient */
+  color: white;
+  padding: 20px;
+  border-radius: 12px; /* Smooth rounded edges */
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Adds depth */
+  text-align: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.room-details .room:hover {
+  transform: scale(1.05); /* Slight zoom effect on hover */
+  box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.room-details .room h3 {
+  font-size: 1.2em;
+  margin: 10px 0;
+  font-weight: bold;
+}
+
+.room-details .room p {
+  font-size: 0.9em;
+  margin: 5px 0;
+  opacity: 0.9;
+}
+
+.room-details .room button {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  margin-top: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.room-details .room button:hover {
+  background-color: rgba(255, 255, 255, 0.4);
+}
+
+/* Modify Button */
+.room-details .modify {
+  cursor: pointer;
+  padding: 6px 12px;
+  background-color: #FFD700; /* Gold color */
+  color: black;
+  border-radius: 8px;
+  font-weight: bold;
+  border: none;
+  margin-top: 10px;
+  transition: background 0.3s ease;
+}
+
+.room-details .modify:hover {
+  background-color: #FFC107; 
+}
+.room.occupied-room {
+  background: linear-gradient(135deg, #FF4C4C, #B22222); 
+  color: white;
+}
+
+
+
