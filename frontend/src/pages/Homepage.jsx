@@ -69,7 +69,16 @@ const Homepage = () => {
     }
   };
   
-
+  const handleSignOut = () => {
+    sessionStorage.removeItem("token");  // Remove token
+    sessionStorage.removeItem("role");   // Remove role (if stored)
+    window.location.href = "/login";   // Redirect to login page
+  };
+  
+  const handleRegisterUser=()=>{
+    navigate("/register");
+  }
+  
   return (
     <div className="container">
       <button
@@ -78,6 +87,19 @@ const Homepage = () => {
       >
         Add Block
       </button> 
+
+      <button
+        className='register-user'
+        onClick={()=>handleRegisterUser()}
+      >
+        Register
+      </button>
+      <button
+        className='signout-button'
+        onClick={()=>handleSignOut()}
+      >
+        signout
+      </button>
       <h1>Home Page</h1>
       {!block.length ? (
         <h1>No data found...</h1>

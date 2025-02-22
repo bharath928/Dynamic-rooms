@@ -36,15 +36,7 @@ const Blockform = () => {
             required
           />
         </label>
-        {/* <label>
-          Number of Floors:
-          <input
-            type="number"
-            value={noOfFloors}
-            onChange={(e) => setNoOfFloors(e.target.value)}
-            required
-          />
-        </label> */}
+        
         <button type="submit">Add Block</button>
       </form>
     </div>

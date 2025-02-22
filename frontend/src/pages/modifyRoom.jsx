@@ -78,7 +78,7 @@ const ModifyRoom = () => {
           onChange={(e) => setRoomCapacity(Number(e.target.value))}
           placeholder="Enter room capacity"
           required
-        />
+          />
           <input
             type="checkbox"
             checked={isOccupied}

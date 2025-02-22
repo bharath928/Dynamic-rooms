@@ -134,3 +134,41 @@ h1 {
   text-align: center;
   font-size: 18px;
 }
+
+.signout-button {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  padding: 10px 20px;
+  background-color: #ff4d4d;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.signout-button:hover {
+  background-color: #d43f3f;
+}
+
+.register-user {
+  position: absolute;
+  top: 22px;
+  right: 140px; /* Move it to the top-right corner */
+  background-color: #007bff; /* Blue color */
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.3s ease-in-out;
+}
+
+.register-user:hover {
+  background-color: #0056b3; /* Darker blue on hover */
+}
+

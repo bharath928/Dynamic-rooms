@@ -1,26 +1,33 @@
-const express = require("express")
-const dotenv = require("dotenv")
+const express = require("express");
+const dotenv = require("dotenv");
 const mongoose = require("mongoose");
-const cors = require("cors")
-const blockRoutes = require("./Routes/blockRoutes")
+const cors = require("cors");
+const blockRoutes = require("./Routes/blockRoutes");
+const authRoutes = require("./Routes/authRoutes"); 
 dotenv.config();
+// const protectedRoutes = require("./Routes/protectedRoutes");
 
 const app = express();
-app.use(cors())
-app.use(express.json());//This is required while doing POST (or) PUT requets...
 
-app.use("/block",blockRoutes)
+app.use(cors());
+app.use(express.json()); 
 
-mongoose.connect(process.env.MONGO_URI)
-.then(()=>{
-    console.log("Mongodb connection successfully..")
+app.use("/block", blockRoutes);
+app.use("/auth", authRoutes); 
+// app.use("/api", protectedRoutes);
+
+mongoose.connect(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
 })
-.catch((err)=>{
-    console.log("something went wrong...",err)
+.then(() =>{
+    console.log("MongoDB connected successfully..")
 })
+.catch((err) =>{
+    console.error("something went wrong...", err)
+});
 
-const port = 5000
-
-app.listen(port,()=>{
-    console.log("Server is running on the server",port)
-})
+const port=  5000;
+app.listen(port, () =>{
+    console.log(`Server is running on port ${port}`)
+});
