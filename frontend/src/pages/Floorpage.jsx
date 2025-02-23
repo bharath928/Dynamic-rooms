@@ -29,6 +29,9 @@ const Floorpage = () => {
       }
     };
     if (block) fetchBlockData();
+   
+   
+    
   }, [block?._id]);
 
   const handleAddFloor = async (e) => {
@@ -180,3 +183,7 @@ const Floorpage = () => {
 };
 
 export default Floorpage;
+
+
+
+

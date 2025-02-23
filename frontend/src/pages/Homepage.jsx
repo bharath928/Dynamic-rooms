@@ -9,20 +9,12 @@ const Homepage = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  // useEffect(()=>{
-  //   const shortcutKeys = async(event)=>{
-  //       if(event.ctrlKey && event.altKey &&event.key==="a"){
-  //         navigate("/add-block");
-  //       }  
-
-  //       window.addEventListener('keydown',shortcutKeys);
-  //       return()=>{
-  //         window.removeEventListener('keydown',shortcutKeys)
-  //       }
-  //   }
-  // },[])
-
   useEffect(() => {
+    const handleBackButton = (event) => {
+      event.preventDefault();
+      navigate("/"); // Redirect to home page
+     
+    };
     const fetchDetails = async () => {
       try {
         const details = await axios.get("http://localhost:5000/block/get-data");
@@ -34,6 +26,13 @@ const Homepage = () => {
       }
     };
     fetchDetails();
+
+    window.history.pushState(null, null, window.location.href);
+  window.addEventListener("popstate", handleBackButton);
+
+  return () => {
+    window.removeEventListener("popstate", handleBackButton);
+  };
   }, []);
 
   if (loading) {
@@ -50,18 +49,15 @@ const Homepage = () => {
 
   const deleteBlock = async (e) => {
     try {
-      // Display a confirmation dialog
       const isConfirmed = window.confirm(`Are you sure you want to delete ${e.block_name}?`);
   
       if (!isConfirmed) {
-        return; // Exit the function if the user cancels
+        return; 
       }
   
-      // Proceed with the deletion
       const response = await axios.delete(`http://localhost:5000/block/delete-data/${e._id}`);
       alert(`${e.block_name} has been deleted successfully`);
 
-      // Fetch the updated list of blocks
       const details = await axios.get("http://localhost:5000/block/get-data");
       setBlock(details.data);
     } catch (err) {
@@ -70,9 +66,10 @@ const Homepage = () => {
   };
   
   const handleSignOut = () => {
-    sessionStorage.removeItem("token");  // Remove token
-    sessionStorage.removeItem("role");   // Remove role (if stored)
-    window.location.href = "/login";   // Redirect to login page
+    sessionStorage.removeItem("token");  
+    sessionStorage.removeItem("role");   
+    // window.location.href = "/login";   
+    navigate("/login"); 
   };
   
   const handleRegisterUser=()=>{

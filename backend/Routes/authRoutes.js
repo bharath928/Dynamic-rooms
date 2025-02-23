@@ -9,6 +9,7 @@ router.post("/register", registerUser);
 router.post("/login", loginUser);
 
 
+
 router.post("/admin-task", authMiddleware(["admin", "super_admin"]), (req, res) => {
     res.json({ message: "Admin task executed successfully" });
   });
@@ -18,3 +19,6 @@ router.post("/admin-task", authMiddleware(["admin", "super_admin"]), (req, res) 
   });
 
 module.exports = router;
+
+
+

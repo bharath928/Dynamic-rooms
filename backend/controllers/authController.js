@@ -23,26 +23,36 @@ const registerUser=async (req,res)=>{
     }
 };
 
+
+
 const loginUser = async (req, res) => {
-    try {
-      const { userId, password } = req.body;
-  
-        console.log("recived",userId,password);
-      const user = await User.findOne({ userId });
-      if (!user) return res.status(400).json({ message: "Invalid Credentials" });
-  
-      const isMatch = await bcrypt.compare(password, user.password);
-      if (!isMatch) return res.status(400).json({ message: "Invalid Credentials" });
-  
-      const token = jwt.sign({ userId: user.userId, role: user.role }, JWT_SECRET, {
-        expiresIn: "1h",
-      });
-  
-      res.json({ token, role: user.role });
-    } catch (err) {
-      res.status(500).json("Error");
+  try {
+    const { userId, password } = req.body;
+    console.log("reciives");
+    
+    const rollNumberPattern = /^[0-9]{2}A51A[0-9]{2}[0-9A-Z]{2}$/; 
+
+    if (rollNumberPattern.test(userId)) {
+      console.log("rollnumber");
+      const token = jwt.sign({ userId, role: "student" }, process.env.JWT_SECRET, { expiresIn: "1h" });
+      return res.json({ token, role: "student" }); 
     }
-  };
+
+    const user = await User.findOne({ userId });
+    if (!user) return res.status(400).json({ message: "Invalid Credentials" });
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) return res.status(400).json({ message: "Invalid Credentials" });
+
+    const token = jwt.sign({ userId: user.userId, role: user.role }, process.env.JWT_SECRET, { expiresIn: "1h" });
+
+    res.json({ token, role: user.role });
+  } catch (err) {
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
+
 
 
 

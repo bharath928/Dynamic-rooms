@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import './ModifyRoom.css';
 import { useNavigate, useLocation } from "react-router-dom";
 
 const ModifyRoom = () => {
@@ -10,6 +11,7 @@ const ModifyRoom = () => {
   const [isOccupied, setIsOccupied] = useState(false);
   const [err, setErr] = useState("");
   const navigate = useNavigate();
+  
 
   const { state } = useLocation();
   const [floor, setFloorId] = useState(state.floor);
@@ -39,58 +41,72 @@ const ModifyRoom = () => {
       );
 
       alert("Room modified successfully.");
-      navigate(`/get-data/${Block.block_name}`, { state: { block: Block } });
+      navigate(`/get-data/${Block.block_name}`, {
+         state: { block: Block, },
+
+         });
     } catch (error) {
       setErr("Failed to modify room");
       console.error(error);
     }
   };
-
+  const backhandler = () => {
+    navigate(`/get-data/${Block.block_name}`, {
+      state: { block: Block, from: "modify-room" }, // Pass state to FloorPage
+      replace: true, // Prevents adding this navigation to history
+    });
+  };
   return (
-    <div className="room-form">
-      <h2>Update Room</h2>
-      {err && <p className="error">Error: {err}</p>}
-      <form>
-        <input
-          type="text"
-          value={roomId}
-          onChange={(e) => setRoomId(e.target.value)}
-          placeholder="Enter room Id"
-          required
-        />
-        <input
-          type="text"
-          value={roomName}
-          onChange={(e) => setRoomName(e.target.value)}
-          placeholder="Enter room name"
-          required
-        />
-        <input
-          type="text"
-          value={roomType}
-          onChange={(e) => setRoomType(e.target.value)}
-          placeholder="Enter room type"
-          required
-        />
-        <input
-          type="number"
-          value={roomCapacity}
-          onChange={(e) => setRoomCapacity(Number(e.target.value))}
-          placeholder="Enter room capacity"
-          required
-          />
-          <input
-            type="checkbox"
-            checked={isOccupied}
-            onChange={() => setIsOccupied(!isOccupied)}
-          />
-          Occupied
-        
+    <div className="room-form-container">
+        {/* Back button at the top-right corner */}
+        <button className="back-btn" onClick={backhandler}>Back</button>
 
-        <button onClick={handleModifyRoom}>Modify Room</button>
-      </form>
+        {/* Centered form */}
+        <div className="room-form">
+            <h2>Update Room</h2>
+            {err && <p className="error">Error: {err}</p>}
+            <form>
+                <input
+                    type="text"
+                    value={roomId}
+                    onChange={(e) => setRoomId(e.target.value)}
+                    placeholder="Enter room Id"
+                    required
+                />
+                <input
+                    type="text"
+                    value={roomName}
+                    onChange={(e) => setRoomName(e.target.value)}
+                    placeholder="Enter room name"
+                    required
+                />
+                <input
+                    type="text"
+                    value={roomType}
+                    onChange={(e) => setRoomType(e.target.value)}
+                    placeholder="Enter room type"
+                    required
+                />
+                <input
+                    type="number"
+                    value={roomCapacity}
+                    onChange={(e) => setRoomCapacity(Number(e.target.value))}
+                    placeholder="Enter room capacity"
+                    required
+                />
+                <label>
+                    <input
+                        type="checkbox"
+                        checked={isOccupied}
+                        onChange={() => setIsOccupied(!isOccupied)}
+                    />
+                    Occupied
+                </label>
+                <button onClick={handleModifyRoom}>Modify Room</button>
+            </form>
+        </div>
     </div>
-  );
+);
 };
 
 export default ModifyRoom;

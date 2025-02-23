@@ -64,3 +64,43 @@
     font-size: 14px;
     margin-top: 10px;
 }
+
+/* Back Button at the Top-Right Corner */
+.back-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: #ff4d4d;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Hover Effect */
+.back-btn:hover {
+    background: #cc0000;
+    transform: scale(1.05);
+}
+
+/* Active/Clicked Effect */
+.back-btn:active {
+    background: #990000;
+    transform: scale(0.95);
+}
+
+/* Ensure button is always visible on small screens */
+@media (max-width: 600px) {
+    .back-btn {
+        top: 10px;
+        right: 10px;
+        font-size: 14px;
+        padding: 8px 15px;
+    }
+}
+

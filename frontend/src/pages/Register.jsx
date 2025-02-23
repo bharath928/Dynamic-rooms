@@ -17,7 +17,7 @@ const Register = () => {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}` // Authenticate the request
+                    "Authorization": `Bearer ${token}` 
                 },
                 body: JSON.stringify({ userId, password, role })
             });
@@ -35,9 +35,12 @@ const Register = () => {
             console.error("Error:", error);
         }
     };
-
+const back=()=>{
+    navigate('/');
+};
     return (
         <div className="register-container">
+            <button className="back-btn" onClick={back}> Back</button>
             <form onSubmit={handleRegister} className="register-box">
                 <h2>Register User</h2>
                 
@@ -71,3 +74,6 @@ const Register = () => {
 };
 
 export default Register;
+
+
+
