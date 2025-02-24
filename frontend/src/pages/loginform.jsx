@@ -18,7 +18,8 @@ const Login = ({ setIsAuthenticated }) => {
       const res = await axios.post("http://localhost:5000/auth/login", payload);
 
       sessionStorage.setItem("token", res.data.token);
-      sessionStorage.setItem("role", res.data.role);
+      // sessionStorage.setItem("role", res.data.role);
+      sessionStorage.setItem("role",isAdmin?"admin":"student");
       setIsAuthenticated(true);
 
       navigate("/", { replace: true });
@@ -56,7 +57,10 @@ const Login = ({ setIsAuthenticated }) => {
         </form>
 
         {/* Toggle between Admin and Student login */}
-        <p className="toggle-login" onClick={() => setIsAdmin(!isAdmin)}>
+        <p className="toggle-login" onClick={() => {
+          setIsAdmin(!isAdmin);
+          
+        }}>
           {isAdmin ? "Login as Student" : "Login as Admin"}
         </p>
       </div>

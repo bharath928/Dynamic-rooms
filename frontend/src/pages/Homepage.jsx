@@ -8,13 +8,18 @@ const Homepage = () => {
   const [err, setErr] = useState("");
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const [access,setaccess]=useState("");
+  const [isrefresh,setisrefresh] = useState(false)
+
 
   useEffect(() => {
     const handleBackButton = (event) => {
       event.preventDefault();
-      navigate("/"); // Redirect to home page
+      navigate("/"); 
      
     };
+    setaccess(sessionStorage.getItem("role"));
+
     const fetchDetails = async () => {
       try {
         const details = await axios.get("http://localhost:5000/block/get-data");
@@ -33,7 +38,7 @@ const Homepage = () => {
   return () => {
     window.removeEventListener("popstate", handleBackButton);
   };
-  }, []);
+  }, [isrefresh]);
 
   if (loading) {
     return (
@@ -46,6 +51,23 @@ const Homepage = () => {
   if (err) {
     return <div className="error">Error occurred: {err}</div>;
   }
+
+  const modifyBlock = async(e)=>{
+    try{
+      const block_name = prompt("Enter new block name");
+    const response = await axios.put(`http://localhost:5000/block/update-data/${e._id}`,{
+      "new_block":block_name
+    })
+    alert(`Block modified succesfully to ${block_name}`)
+    setisrefresh(!isrefresh);
+    }catch(err){
+      console.log(err.message)
+      alert(err.message)
+    }
+  }
+
+  
+  
 
   const deleteBlock = async (e) => {
     try {
@@ -79,24 +101,30 @@ const Homepage = () => {
   return (
     <div className="container">
       <button
-        className="add-block-button"
+      // {access=="student"}
+        className={`${access=="student"?"grant-access":"add-block-button"}`}
         onClick={() => navigate("/add-block")}
       >
         Add Block
       </button> 
 
       <button
-        className='register-user'
+        // className='register-user'
+        className={`${access=="student"?"grant-access":"register-user"}`}
+
         onClick={()=>handleRegisterUser()}
       >
         Register
       </button>
+
       <button
-        className='signout-button'
+        // className='signout-button'
+        className={`${access=="student"?"grant-access":"signout-button"}`}
         onClick={()=>handleSignOut()}
       >
         signout
       </button>
+
       <h1>Home Page</h1>
       {!block.length ? (
         <h1>No data found...</h1>
@@ -114,7 +142,8 @@ const Homepage = () => {
                 {/* <input type="button" value="Delete" onClick={() => deleteBlock(e)}/> */}
               </div>
 
-              <div className='card-button'>
+              <div className={`${access=="student"?"grant-access":"card-button"}`}>
+                <input type="button" value="Modify" onClick={()=>modifyBlock(e)}/>
                 <input type="button" value="Delete" onClick={()=>{deleteBlock(e)}}/>
               </div>
             </div>

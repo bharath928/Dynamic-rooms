@@ -39,6 +39,24 @@ const getBlockDetailsbyId = async (req,res)=>{
     }
 }
 
+const modifyBlock = async(req,res)=>{
+    try{
+        const {id} = req.params;
+    const {new_block} = req.body;
+    console.log(new_block)
+
+    const data = await block.findById(id);
+    console.log(data.block_name)
+    if(!data) return res.status(400).json({"msg":"block not found"})
+
+    data.block_name = new_block
+    await data.save()
+    res.status(200).json(data);
+    }catch(err){
+        res.status(500).json({"err":err.message})
+    }
+}
+
 const deleteBlock = async (req,res)=>{
     const {id }= req.params;
     try{
@@ -271,4 +289,4 @@ const userRegister=  async (req, res) => {
 }
 
 
-module.exports = {createBlock,getBlockDetails,getBlockDetailsbyId,deleteBlock,updateBlockDetailsbyId,addroomDetails,updateRoomDetails,deleteFloor,deleteRoom,userRegister}
+module.exports = {createBlock,getBlockDetails,getBlockDetailsbyId,deleteBlock,updateBlockDetailsbyId,addroomDetails,updateRoomDetails,deleteFloor,deleteRoom,userRegister,modifyBlock}

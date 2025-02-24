@@ -21,7 +21,7 @@ const App = () => {
     <Routes>
       <Route path="/login" element={<Login setIsAuthenticated={setIsAuthenticated} />} />
       {isAuthenticated ? (
-        <>
+        <>z
           <Route path="/" element={<ProtectedRoute><Homepage /></ProtectedRoute>} />
           <Route path="/add-block" element={<ProtectedRoute><Blockform /></ProtectedRoute>} />
           <Route path="/get-data/:blockname" element={<ProtectedRoute><Floorpage /></ProtectedRoute>} />

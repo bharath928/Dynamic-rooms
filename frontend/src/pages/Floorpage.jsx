@@ -16,8 +16,10 @@ const Floorpage = () => {
   const [floorName, setFloorName] = useState(""); 
   const [roomdata, setRoomData] = useState([]); 
   const [err, setErr] = useState(""); 
+  const [access,setaccess]=useState("");
 
   useEffect(() => {
+    setaccess(sessionStorage.getItem("role"));
     const fetchBlockData = async () => {
       try {
         const response = await axios.get(`http://localhost:5000/block/get-data/${block._id}`);
@@ -119,7 +121,8 @@ const Floorpage = () => {
       {err && <p className="error">Error: {err}</p>}
       <button className="back_btn" onClick={backtohome}>Back</button>
 
-      <div className="floor-input">
+      <div    className={`${access=="student"?"grant-access":"floor-input"}`}
+>
         <form>
           <input
             type="text"
@@ -147,7 +150,9 @@ const Floorpage = () => {
 
       {floorid && (
         <div>
-          <button onClick={addRooms}>Add Room to {floorid.floor_name.toUpperCase()}</button>
+          <button className={`${access=="student"?"grant-access":""}`}
+
+           onClick={addRooms}>Add Room to {floorid.floor_name.toUpperCase()}</button>
           <h2>Rooms:</h2>
           {roomdata.length > 0 ? (
             <div className="room-details">
@@ -159,11 +164,14 @@ const Floorpage = () => {
                     <p>{room.room_type}</p>
                     <p>{room.room_capacity}</p>
                     <p>{room.occupied ? "Occupied" : "Empty"}</p>
-                    <button onClick={(e) => {
+                    <button className={`${access=="student"?"grant-access":""}`}
+
+                    onClick={(e) => {
                       e.stopPropagation();
                       modifyRoom(room);
                     }}>Modify</button>
-                    <button onClick={(e) => {
+                    <button  className={`${access=="student"?"grant-access":""}`}
+                    onClick={(e) => {
                       e.stopPropagation();
                       deleteRoom(room);
                     }}>Delete</button>

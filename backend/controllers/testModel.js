@@ -17,7 +17,7 @@ const testUserModel = async () => {
         const newUser = new User({
             userId: "22A51A05F7",
             password: "bharath5f7",
-            role: "user" // Change this to "super_admin" or "user" to test
+            role: "admin" // Change this to "super_admin" or "user" to test
         });
 
         // Save user to the database
