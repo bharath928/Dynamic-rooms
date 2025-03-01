@@ -1,12 +1,27 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import './Register.css';
 import { Navigate, useNavigate } from "react-router-dom";
+import axios from "axios"
 const Register = () => {
     const [userId, setUserId] = useState("");
     const [password, setPassword] = useState("");
-    const [role, setRole] = useState("user"); 
+    // const [role, setRole] = useState("admin"); 
+    const [dept, setdept] = useState(""); 
     const [message, setMessage] = useState("");
     const navigate=useNavigate();
+    const [blockNames,setblockNames] = useState([])
+
+    useEffect(()=>{
+        const fetch = async()=>{
+            try {
+                const details = await axios.get("http://localhost:5000/block/get-data");
+                setblockNames(details.data);
+              } catch (err) {
+                alert(err.message)
+              }
+        }
+        fetch()
+    },[])
     
     const handleRegister = async (e) => {
         e.preventDefault();
@@ -19,7 +34,7 @@ const Register = () => {
                     "Content-Type": "application/json",
                     "Authorization": `Bearer ${token}` 
                 },
-                body: JSON.stringify({ userId, password, role })
+                body: JSON.stringify({ userId, password , dept })
             });
 
             const data = await response.json();
@@ -36,7 +51,7 @@ const Register = () => {
         }
     };
 const back=()=>{
-    navigate('/');
+    navigate('/login');
 };
     return (
         <div className="register-container">
@@ -60,9 +75,17 @@ const back=()=>{
                     required 
                 />
 
-                
-                 <p>Register for new Admin</p>
+                <select name="" id="" onChange={e=>{
+                    setdept(e.target.value);
+                    sessionStorage.setItem("dept",e.target.value)
+                }}>
+                    <option value="">select your department</option>
+                    {blockNames.map(e=>(
+                        <option value={e.block_name.toLowerCase()}>{e.block_name.toUpperCase()}</option>
+                    ))}
+                </select>
 
+                 <p>Register for new Admin</p>
                 <button type="submit">Register</button>
 
                 {message && <p>{message}</p>}

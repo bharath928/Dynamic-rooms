@@ -13,6 +13,12 @@ const userSchema=new mongoose.Schema({
       required: true,
    },
 
+   dept:{
+      type:String,
+      // required:t,
+      default:""
+   },
+
    role:{
       type:String,
       enum:["super_admin","admin"],
@@ -26,5 +32,5 @@ userSchema.pre("save", async function (n) {
    n();
  });
 
- const User = mongoose.model("User", userSchema);
+ const User = mongoose.model("user", userSchema);
  module.exports = User;

@@ -8,6 +8,7 @@ import ModifyRoom from "./pages/ModifyRoom";
 import Login from "./pages/loginform";
 import ProtectedRoute from "./pages/ProtectedRoute";
 import Register from "./pages/Register";
+import AdminDashboard from "./pages/Dashboard";
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(!!sessionStorage.getItem("token"));
@@ -23,6 +24,7 @@ const App = () => {
       {isAuthenticated ? (
         <>z
           <Route path="/" element={<ProtectedRoute><Homepage /></ProtectedRoute>} />
+          <Route path="/dashboard" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
           <Route path="/add-block" element={<ProtectedRoute><Blockform /></ProtectedRoute>} />
           <Route path="/get-data/:blockname" element={<ProtectedRoute><Floorpage /></ProtectedRoute>} />
           <Route path="/get-data/:blockId/:floorname" element={<ProtectedRoute><Roomform /></ProtectedRoute>} />
@@ -33,6 +35,8 @@ const App = () => {
         <Route path="*" element={<Navigate to="/login" />} />
       )}
     </Routes>
+
+
   );
 };
 

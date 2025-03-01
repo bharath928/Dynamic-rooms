@@ -15,11 +15,13 @@ const Floorpage = () => {
   const [floorid, setFloorid] = useState(null);
   const [floorName, setFloorName] = useState(""); 
   const [roomdata, setRoomData] = useState([]); 
+  const [dept,setdept]=useState("");
   const [err, setErr] = useState(""); 
   const [access,setaccess]=useState("");
 
   useEffect(() => {
-    setaccess(sessionStorage.getItem("role"));
+    setaccess(JSON.parse(sessionStorage.getItem("role")));
+    setdept(JSON.parse(sessionStorage.getItem("dept")));
     const fetchBlockData = async () => {
       try {
         const response = await axios.get(`http://localhost:5000/block/get-data/${block._id}`);
@@ -31,9 +33,6 @@ const Floorpage = () => {
       }
     };
     if (block) fetchBlockData();
-   
-   
-    
   }, [block?._id]);
 
   const handleAddFloor = async (e) => {
@@ -121,7 +120,7 @@ const Floorpage = () => {
       {err && <p className="error">Error: {err}</p>}
       <button className="back_btn" onClick={backtohome}>Back</button>
 
-      <div    className={`${access=="student"?"grant-access":"floor-input"}`}
+      <div className={`${((access !== "super_admin") && (access === "student" || dept.toLowerCase() !== block.block_name.toLowerCase())) ? "grant-access" : "floor-input"}`}
 >
         <form>
           <input
@@ -150,9 +149,9 @@ const Floorpage = () => {
 
       {floorid && (
         <div>
-          <button className={`${access=="student"?"grant-access":""}`}
+          <button className={`${((access !== "super_admin") && (access === "student" || dept.toLowerCase() !== block.block_name.toLowerCase())) ? "grant-access" : ""}`}
+          onClick={addRooms}>Add Room to {floorid.floor_name.toUpperCase()}</button>
 
-           onClick={addRooms}>Add Room to {floorid.floor_name.toUpperCase()}</button>
           <h2>Rooms:</h2>
           {roomdata.length > 0 ? (
             <div className="room-details">
@@ -164,13 +163,12 @@ const Floorpage = () => {
                     <p>{room.room_type}</p>
                     <p>{room.room_capacity}</p>
                     <p>{room.occupied ? "Occupied" : "Empty"}</p>
-                    <button className={`${access=="student"?"grant-access":""}`}
-
+                    <button className={`${((access !== "super_admin") && (access === "student" || dept.toLowerCase() !== block.block_name.toLowerCase())) ? "grant-access" : ""}`}
                     onClick={(e) => {
                       e.stopPropagation();
                       modifyRoom(room);
                     }}>Modify</button>
-                    <button  className={`${access=="student"?"grant-access":""}`}
+                    <button  className={`${((access !== "super_admin") && (access === "student" || dept.toLowerCase() !== block.block_name.toLowerCase())) ? "grant-access" : ""}`}
                     onClick={(e) => {
                       e.stopPropagation();
                       deleteRoom(room);

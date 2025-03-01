@@ -3,6 +3,7 @@ import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "./loginform.css";
+// const jwt= require("jwt-decode");
 
 const Login = ({ setIsAuthenticated }) => {
   const [userId, setUserId] = useState("");
@@ -10,21 +11,30 @@ const Login = ({ setIsAuthenticated }) => {
   const [error, setError] = useState("");
   const [isAdmin, setIsAdmin] = useState(false); // Toggle between Student & Admin
   const navigate = useNavigate();
-
+// const [issuperadmin,setsuperadmin]=useState(false);
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const payload = isAdmin ? { userId, password } : { userId }; // Admin requires password, student does not
       const res = await axios.post("http://localhost:5000/auth/login", payload);
 
-      sessionStorage.setItem("token", res.data.token);
-      // sessionStorage.setItem("role", res.data.role);
-      sessionStorage.setItem("role",isAdmin?"admin":"student");
+      if(isAdmin && res  ){
+        const userCollection = await axios.get(`http://localhost:5000/auth/userDetails/${userId}`)
+        sessionStorage.setItem("dept", JSON.stringify(userCollection.data.dept));
+        sessionStorage.setItem("role", JSON.stringify(userCollection.data.role));
+      }
+
+      sessionStorage.setItem("token", JSON.stringify(res.data.token));
+      
+      if(!isAdmin){
+        sessionStorage.setItem("role",JSON.stringify("student"));
+
+      }   
       setIsAuthenticated(true);
 
       navigate("/", { replace: true });
     } catch (err) {
-      setError("Invalid Credentials");
+      setError("Admin not found..");
     }
   };
 

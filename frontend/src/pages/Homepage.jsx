@@ -8,9 +8,11 @@ const Homepage = () => {
   const [err, setErr] = useState("");
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  const [access,setaccess]=useState("");
+  // const [access,setaccess]=useState(()=>{return (sessionStorage.getItem("role"))})
+  // const [dept,setdept]=useState(()=>{return (sessionStorage.getItem("dept"))})
+  const [access,setaccess] = useState("");
+  const [dept,setdept] = useState("");
   const [isrefresh,setisrefresh] = useState(false)
-
 
   useEffect(() => {
     const handleBackButton = (event) => {
@@ -18,12 +20,16 @@ const Homepage = () => {
       navigate("/"); 
      
     };
-    setaccess(sessionStorage.getItem("role"));
+    // console.log(access)
+    // console.log(dept)
+    setaccess(JSON.parse(sessionStorage.getItem("role")));
+    setdept(JSON.parse(sessionStorage.getItem("dept")));
 
     const fetchDetails = async () => {
       try {
         const details = await axios.get("http://localhost:5000/block/get-data");
         setBlock(details.data);
+        // alert(access)
       } catch (err) {
         setErr(err.message);
       } finally {
@@ -88,8 +94,8 @@ const Homepage = () => {
   };
   
   const handleSignOut = () => {
-    sessionStorage.removeItem("token");  
-    sessionStorage.removeItem("role");   
+    sessionStorage.clear();  
+    // sessionStorage.removeItem("role");   
     // window.location.href = "/login";   
     navigate("/login"); 
   };
@@ -102,7 +108,7 @@ const Homepage = () => {
     <div className="container">
       <button
       // {access=="student"}
-        className={`${access=="student"?"grant-access":"add-block-button"}`}
+        className={`${access!="super_admin"?"grant-access":"add-block-button"}`}
         onClick={() => navigate("/add-block")}
       >
         Add Block
@@ -111,7 +117,6 @@ const Homepage = () => {
       <button
         // className='register-user'
         className={`${access=="student"?"grant-access":"register-user"}`}
-
         onClick={()=>handleRegisterUser()}
       >
         Register
@@ -119,7 +124,7 @@ const Homepage = () => {
 
       <button
         // className='signout-button'
-        className={`${access=="student"?"grant-access":"signout-button"}`}
+        className="signout-button"
         onClick={()=>handleSignOut()}
       >
         signout
@@ -142,10 +147,11 @@ const Homepage = () => {
                 {/* <input type="button" value="Delete" onClick={() => deleteBlock(e)}/> */}
               </div>
 
-              <div className={`${access=="student"?"grant-access":"card-button"}`}>
-                <input type="button" value="Modify" onClick={()=>modifyBlock(e)}/>
-                <input type="button" value="Delete" onClick={()=>{deleteBlock(e)}}/>
-              </div>
+                <div className={`${((access !== "super_admin") && (access === "student" || dept.toLowerCase() !== e.block_name.toLowerCase())) ? "grant-access" : "card-button"}`}>
+                  <input type="button" value="Modify" onClick={() => modifyBlock(e)} />
+                  <input type="button" value="Delete" onClick={() => deleteBlock(e)} />
+                  </div>
+
             </div>
             
           ))}
