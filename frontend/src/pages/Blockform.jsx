@@ -5,7 +5,6 @@ import "./Blockform.css";
 
 const Blockform = () => {
   const [blockName, setBlockName] = useState("");
-  // const [noOfFloors, setNoOfFloors] = useState("");
   const [err, setErr] = useState("");
   const navigate = useNavigate();
 
@@ -14,7 +13,6 @@ const Blockform = () => {
     try {
       await axios.post("http://localhost:5000/block/add-data", {
         block_name: blockName,
-        // no_of_floor: noOfFloors,
       });
       navigate("/"); 
     } catch (err) {

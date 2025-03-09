@@ -1,4 +1,4 @@
-General container styling
+/* General container styling
 .container {
   max-width: 1200px;
   margin: 0 auto;
@@ -169,10 +169,104 @@ h1 {
 }
 
 .register-user:hover {
-  background-color: #0056b3; /* Darker blue on hover */
+  background-color: #0056b3; 
 }
 
 .grant-access{
   display:none;
 }
 
+.dashboard {
+  position: absolute;
+  top: 80px;
+  right: 30px;
+  padding: 10px 15px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease-in-out;
+}
+
+.dashboard:hover {
+  background-color: #0056b3;
+}
+
+
+
+/* .homepage-container {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.header-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 800px;
+  margin-bottom: 20px;
+}
+
+.search-bar {
+  width: 300px;
+}
+
+.page-title {
+  margin-bottom: 30px;
+}
+
+.card-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  height: 60vh;
+  transition: opacity 0.5s ease-in-out;
+}
+
+.card-container.search-active {
+  height: auto;
+}
+
+.block-card {
+  transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+  cursor: pointer;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.block-card:hover {
+  transform: scale(1.05);
+}
+
+.block-card.highlighted {
+  opacity: 1;
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+  transform: scale(1.05);
+}
+
+.card-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.no-results {
+  color: red;
+  font-size: 1.2rem;
+  margin-top: 20px;
+}
+
+.loading, .error {
+  text-align: center;
+  font-size: 1.5rem;
+  margin-top: 50px;
+  color: red;
+}
+ */

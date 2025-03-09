@@ -57,6 +57,7 @@ const modifyBlock = async(req,res)=>{
     }
 }
 
+
 const deleteBlock = async (req,res)=>{
     const {id }= req.params;
     try{
@@ -248,6 +249,7 @@ const updateRoomDetails = async (req, res) => {
         room.room_type = room_type || room.room_type;
         room.room_capacity = room_capacity || room.room_capacity;
         room.occupied = occupied !== undefined ? occupied : room.occupied; 
+        room.lastModifiedDate = new Date()
 
         await Block.save();
         res.status(200).json(room);

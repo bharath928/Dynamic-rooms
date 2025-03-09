@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./FloorPage.css";
+import { jwtDecode } from "jwt-decode";
+import {formatDistanceToNow} from "date-fns"
 
 const Floorpage = () => {
   const { state } = useLocation();
@@ -20,8 +22,13 @@ const Floorpage = () => {
   const [access,setaccess]=useState("");
 
   useEffect(() => {
-    setaccess(JSON.parse(sessionStorage.getItem("role")));
-    setdept(JSON.parse(sessionStorage.getItem("dept")));
+   
+     const token=sessionStorage.getItem("token");
+        const decode=jwtDecode(token);
+    
+          setaccess(decode.role);
+          setdept(decode.dept);
+
     const fetchBlockData = async () => {
       try {
         const response = await axios.get(`http://localhost:5000/block/get-data/${block._id}`);
@@ -158,6 +165,7 @@ const Floorpage = () => {
               {roomdata.map((room, index) => {
                 return (
                   <div key={index} className={`room ${room.occupied ? "occupied-room" : ""}`} >
+                    <p>Last Modified: {formatDistanceToNow(new Date(room.lastModifiedDate), { addSuffix: true })}</p>
                     <p>{room.room_id}</p>
                     <h3>{room.room_name}</h3>
                     <p>{room.room_type}</p>

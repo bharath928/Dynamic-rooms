@@ -27,14 +27,14 @@ const AdminDashboard = () => {
   }, []);
 
   // Delete admin function
-  const deleteAdmin = async (adminId) => {
+  const deleteAdmin = async (adminid) => {
     const confirmDelete = window.confirm("Are you sure you want to delete this admin?");
     if (!confirmDelete) return;
 
     try {
-      await axios.delete(`http://localhost:5000/auth/delete/${adminId}`);
+      await axios.delete(`http://localhost:5000/auth/delete/${adminid}`);
       alert("Admin deleted successfully!");
-      setAdmins(admins.filter((admin) => admin._id !== adminId)); // Update UI
+      setAdmins(admins.filter((admin) => admin._id !== adminid));
     } catch (err) {
       alert("Error deleting admin: " + (err.response?.data?.message || err.message));
     }

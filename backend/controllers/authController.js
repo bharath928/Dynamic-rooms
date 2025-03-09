@@ -37,14 +37,15 @@ const loginUser = async (req, res) => {
       const isMatch = await bcrypt.compare(password, user.password);
       if (!isMatch) return res.status(400).json({ message: "Password incorrect..." });
 
-      const token = jwt.sign({ "userId": user.userId, "role": user.role }, process.env.JWT_SECRET, { expiresIn: "1h" });
+      const token = jwt.sign({ "userId": user.userId, "role"
+        : user.role,"dept":user.dept}, process.env.JWT_SECRET, { expiresIn: "1h" });
 
-      res.json({ token, "role": user.role });
+      res.json({ token });
     }else{
       const rollNumberPattern = /^[0-9]{2}A51A[0-9]{2}[0-9A-Z]{2}$/; 
       if (rollNumberPattern.test(userId)) {
         // console.log("rollnumber");
-        const token = jwt.sign({ userId, "role": "student" }, process.env.JWT_SECRET, { expiresIn: "1h" });
+        const token = jwt.sign({ userId, "role": "student","dept":"" }, process.env.JWT_SECRET, { expiresIn: "1h" });
         return res.json({ token, role: "student" }); 
     }
     } 
@@ -78,7 +79,19 @@ const adminDetails = async (req, res) => {
   }
 };
 
+const deleteadmin=async (req,res)=>{
+ 
+    const {adminid}=req.params;
+    try{
+      const result=await User.findByIdAndDelete(adminid);
 
+      return res.status(200).json(result);
+    }catch(e)
+    {
+    console.error(e)
+    res.status(400).json({"msg":"something went wrong..."});
+  }
+}
 
   
-  module.exports = { registerUser, loginUser ,userCollection,adminDetails};
+  module.exports = { registerUser, loginUser ,userCollection,adminDetails,deleteadmin};

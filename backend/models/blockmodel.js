@@ -26,7 +26,16 @@ const roomSchema = new mongoose.Schema({
         type:Boolean,
         required:true,
         default:false
+    },
+    lastModifiedDate:{
+        type:Date,
+        default:Date.now
     }
+})
+
+roomSchema.pre("save",(next)=>{
+    this.lastModifiedDate = new Date();
+    next()
 })
 
 const floorSchema = new mongoose.Schema({

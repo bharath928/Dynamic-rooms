@@ -36,11 +36,13 @@ const Register = () => {
                 },
                 body: JSON.stringify({ userId, password , dept })
             });
+            
 
             const data = await response.json();
 
             if (response.ok) {
                 setMessage("User registered successfully!");
+                // sessionStorage.setItem("dept",JSON.stringify(dept));
                 setTimeout(()=> navigate("/"),1000);
             } else {
                 setMessage(`Error: ${data.message}`);
@@ -51,7 +53,7 @@ const Register = () => {
         }
     };
 const back=()=>{
-    navigate('/login');
+    navigate('/');
 };
     return (
         <div className="register-container">
@@ -77,7 +79,6 @@ const back=()=>{
 
                 <select name="" id="" onChange={e=>{
                     setdept(e.target.value);
-                    sessionStorage.setItem("dept",e.target.value)
                 }}>
                     <option value="">select your department</option>
                     {blockNames.map(e=>(
