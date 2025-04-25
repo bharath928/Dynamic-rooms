@@ -279,16 +279,41 @@ const deleteRoom = async (req, res) => {
     }
 }
 
-const userRegister=  async (req, res) => {
-    try {
-      const { userId, password, role } = req.body;
-      const newUser = new User({ userId, password, role });
-      await newUser.save();
-      res.status(201).json({ message: "User registered successfully", user: newUser });
-    } catch (error) {
-      res.status(400).json({ error: error.message });
+// const userRegister=  async (req, res) => {
+//     try {
+//       const { userId, password, role } = req.body;
+//       const newUser = new User({ userId, password, role });
+//       await newUser.save();
+//       res.status(201).json({ message: "User registered successfully", user: newUser });
+//     } catch (error) {
+//       res.status(400).json({ error: error.message });
+//     }
+// }
+
+//Dashboard for displaying the room based on the status...
+const blockStatus = async(req,res)=>{
+    try{
+        const {name,status} = req.params
+        const response = await block.findOne({"block_name":name})
+        if(!response)
+            return res.status(404).json("block not found...")
+
+        const roomData = response.floors.flatMap(f=>f.rooms || [])
+        //If user want all Rooms in the block...
+        if(status==0)
+            return res.status(200).json(roomData)
+
+        const statusValue = (status==1)
+        const statusData = roomData.filter(f=>f.occupied===statusValue)
+        if(!statusData)
+            return res.status(404).json("rooms not found")
+        res.status(200).json(statusData)
+    
+    }catch(e){
+        console.log(e.message)
+        res.status(500).json({"msg":e.message})
     }
 }
 
 
-module.exports = {createBlock,getBlockDetails,getBlockDetailsbyId,deleteBlock,updateBlockDetailsbyId,addroomDetails,updateRoomDetails,deleteFloor,deleteRoom,userRegister,modifyBlock}
+module.exports = {createBlock,getBlockDetails,getBlockDetailsbyId,deleteBlock,updateBlockDetailsbyId,addroomDetails,updateRoomDetails,deleteFloor,deleteRoom,modifyBlock,blockStatus}

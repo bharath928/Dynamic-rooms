@@ -22,5 +22,9 @@ router.put("/floors/room/:blockid/:floorid/:roomid",blockController.updateRoomDe
 router.delete("/:blockId/floor/:floorId/room/:roomId", blockController.deleteRoom);
 
 //authentication routes..
-router.post("/register",blockController.userRegister);
+// router.post("/register",blockController.userRegister);
+
+//Block Dashboard for displaying the room details based on the status..
+router.get("/dashboard/:name/:status",blockController.blockStatus)
+
 module.exports = router

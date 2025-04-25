@@ -1,6 +1,6 @@
 .deleteButton{
   margin-left: 46em;
-  background-color: red;
+  background-color: rgb(255, 0, 0);
   cursor: pointer;
   opacity: 0.7;
 }

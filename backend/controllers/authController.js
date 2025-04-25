@@ -33,7 +33,7 @@ const loginUser = async (req, res) => {
     if(userId && password){
       const user = await User.findOne({ userId });
       if (!user) return res.status(400).json({ message: "admin not found.." });
-      console.log(user)
+      // console.log(user)
       const isMatch = await bcrypt.compare(password, user.password);
       if (!isMatch) return res.status(400).json({ message: "Password incorrect..." });
 
@@ -42,12 +42,13 @@ const loginUser = async (req, res) => {
 
       res.json({ token });
     }else{
-      const rollNumberPattern = /^[0-9]{2}A51A[0-9]{2}[0-9A-Z]{2}$/; 
-      if (rollNumberPattern.test(userId)) {
-        // console.log("rollnumber");
-        const token = jwt.sign({ userId, "role": "student","dept":"" }, process.env.JWT_SECRET, { expiresIn: "1h" });
-        return res.json({ token, role: "student" }); 
-    }
+      const rollNumberPattern = /^[0-9]{2}[A-Z]51[A-Z][0-9]{2}[0-9A-Z]{2}$/i;
+      const facultyPattern = /^A5[A-Za-z]{3}00T[0-9]{2}$/i; 
+      if (!rollNumberPattern.test(userId) && !facultyPattern.test(userId)){
+        return res.status(400).json({message:"Student ID not matched.."})
+      }
+      const token = jwt.sign({ userId, "role": "student","dept":"" }, process.env.JWT_SECRET, { expiresIn: "1h" });
+      return res.json({ token, role: "student" }); 
     } 
   } catch (err) {
     res.status(500).json({ message: "Server Error" });

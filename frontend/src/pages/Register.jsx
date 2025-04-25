@@ -1,49 +1,61 @@
 import React, { useEffect, useState } from "react";
-import './Register.css';
-import { Navigate, useNavigate } from "react-router-dom";
-import axios from "axios"
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { jwtDecode } from "jwt-decode";
+import "bootstrap/dist/css/bootstrap.min.css";
+import AOS from "aos";
+import "aos/dist/aos.css";
+// import "./Register.css"
+ 
+
 const Register = () => {
     const [userId, setUserId] = useState("");
     const [password, setPassword] = useState("");
-    // const [role, setRole] = useState("admin"); 
-    const [dept, setdept] = useState(""); 
+    const [role, setRole] = useState("");
+    const [dept, setDept] = useState("");
     const [message, setMessage] = useState("");
-    const navigate=useNavigate();
-    const [blockNames,setblockNames] = useState([])
+    const navigate = useNavigate();
+    const [blockNames, setBlockNames] = useState([]);
 
-    useEffect(()=>{
-        const fetch = async()=>{
+    //Shortcut Keys...
+   
+
+    useEffect(() => {
+        const fetch = async () => {
             try {
                 const details = await axios.get("http://localhost:5000/block/get-data");
-                setblockNames(details.data);
-              } catch (err) {
-                alert(err.message)
-              }
-        }
-        fetch()
-    },[])
-    
+                setBlockNames(details.data);
+            } catch (err) {
+                alert(err.message);
+            }
+            const token = sessionStorage.getItem("token");
+            if (token) {
+                const decode = jwtDecode(token);
+                setRole(decode.role);
+                setDept(decode.dept);
+            }
+        };
+        fetch();
+    }, []);
+
     const handleRegister = async (e) => {
         e.preventDefault();
-
         const token = localStorage.getItem("token");
+
         try {
             const response = await fetch("http://localhost:5000/auth/register", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}` 
+                    "Authorization": `Bearer ${token}`
                 },
-                body: JSON.stringify({ userId, password , dept })
+                body: JSON.stringify({ userId, password, dept })
             });
-            
 
             const data = await response.json();
-
             if (response.ok) {
                 setMessage("User registered successfully!");
-                // sessionStorage.setItem("dept",JSON.stringify(dept));
-                setTimeout(()=> navigate("/"),1000);
+                setTimeout(() => navigate("/"), 1000);
             } else {
                 setMessage(`Error: ${data.message}`);
             }
@@ -52,50 +64,76 @@ const Register = () => {
             console.error("Error:", error);
         }
     };
-const back=()=>{
-    navigate('/');
-};
+
     return (
-        <div className="register-container">
-            <button className="back-btn" onClick={back}> Back</button>
-            <form onSubmit={handleRegister} className="register-box">
-                <h2>Register User</h2>
-                
-                <input 
-                    type="text" 
-                    placeholder="User ID" 
-                    value={userId} 
-                    onChange={(e) => setUserId(e.target.value)} 
-                    required 
-                />
+        <div className="register-wrapper d-flex justify-content-center align-items-center vh-100">
+  <div className="register-card shadow-lg p-4" style={{ width: "400px" }}>
+    <h2 className="register-title mb-4 text-center">Register User</h2>
 
-                <input 
-                    type="password" 
-                    placeholder="Password" 
-                    value={password} 
-                    onChange={(e) => setPassword(e.target.value)} 
-                    required 
-                />
+    {message && <div className="register-message alert alert-info text-center">{message}</div>}
 
-                <select name="" id="" onChange={e=>{
-                    setdept(e.target.value);
-                }}>
-                    <option value="">select your department</option>
-                    {blockNames.map(e=>(
-                        <option value={e.block_name.toLowerCase()}>{e.block_name.toUpperCase()}</option>
-                    ))}
-                </select>
+    <form onSubmit={handleRegister}>
+      <div className="register-input mb-3">
+        <input
+          type="text"
+          className="form-control"
+          placeholder="User ID"
+          value={userId}
+          onChange={(e) => setUserId(e.target.value)}
+          required
+        />
+      </div>
 
-                 <p>Register for new Admin</p>
-                <button type="submit">Register</button>
+      <div className="register-input mb-3">
+        <input
+          type="password"
+          className="form-control"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
+      </div>
 
-                {message && <p>{message}</p>}
-            </form>
-        </div>
+      <div className="register-input mb-3">
+        <select
+          className="form-select"
+          onChange={(e) => setDept(e.target.value)}
+        >
+          {role === "super_admin" ? (
+            <>
+              <option value="">Select your department</option>
+              {blockNames.map((e, index) => (
+                <option key={index} value={e.block_name.toLowerCase()}>
+                  {e.block_name.toUpperCase()}
+                </option>
+              ))}
+            </>
+          ) : (
+            <option value={dept}>{dept.toUpperCase()}</option>
+          )}
+        </select>
+      </div>
+
+      <p className="register-note text-center text-muted">Register for new Admin</p>
+
+      <div className="d-flex justify-content-between gap-2">
+        <button type="submit" className="btn btn-primary flex-grow-1">
+          Register
+        </button>
+        <button
+          type="button"
+          className="btn btn-danger flex-grow-1"
+          onClick={() => navigate("/")}
+        >
+          Back
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
     );
 };
 
 export default Register;
-
-
-

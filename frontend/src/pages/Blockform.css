@@ -1,40 +1,38 @@
-.form-container {
-    max-width: 400px;
-    margin: auto;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 10px;
-    background: #f9f9f9;
-  }
-  
-  form label {
-    display: block;
-    margin-bottom: 10px;
-  }
-  
-  form input {
-    width: 90%;
-    padding: 10px;
-    margin-bottom: 20px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-  }
-  
-  form button {
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    cursor: pointer;
-    font-size: 16px;
-    border-radius: 5px;
-  }
-  
-  form button:hover {
-    background-color: #45a049;
-  }
-  
-  .error {
-    color: red;
-  }
-  
+.add-block-wrapper {
+  background: linear-gradient(to bottom right, #f7f8fa, #e0eafc);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  height: 100vh;
+  width: 100vw;
+}
+
+.add-block-card {
+  background-color: #ffffff;
+  padding: 35px;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  width: 360px;
+}
+
+.add-block-title {
+  font-size: 24px;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.add-block-input-group {
+  text-align: left;
+}
+
+.add-block-error {
+  color: #e53935;
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+
+.add-block-btn {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 6px;
+}

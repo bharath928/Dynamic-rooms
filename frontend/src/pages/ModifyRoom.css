@@ -1,17 +1,16 @@
-/* Full-page container */
-.room-form-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;  /* Takes full viewport height */
-    width: 100vw;   /* Takes full viewport width */
-    background: linear-gradient(135deg, #ffffff, #cfd9df);
-    font-family: Arial, sans-serif;
-    position: relative;
-}
 
-/* Back Button at the Top-Right Corner */
-.back-btn {
+.add-room-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100vw;
+    background: linear-gradient(to bottom right, #f7f8fa, #e0eafc);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    position: relative;
+  }
+  
+  .back-btn {
     position: absolute;
     top: 20px;
     right: 40px;
@@ -23,106 +22,73 @@
     border-radius: 5px;
     cursor: pointer;
     transition: background 0.3s ease;
-}
-
-.back-btn:hover {
+  }
+  
+  .back-btn:hover {
     background: #cc0000;
-}
-
-/* Centered Form */
-.room-form {
-    background: rgba(255, 255, 255, 0.9);
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    width: 350px;
+  }
+  
+  .add-room-card {
+    background-color: #ffffff;
+    padding: 35px;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    width: 360px;
     text-align: center;
-    backdrop-filter: blur(10px);
-}
-
-/* Ensure form content is centered */
-.room-form form {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-/* Form Title */
-.room-form h2 {
-    color: #333;
+  }
+  
+  .add-room-title {
+    font-size: 22px;
     margin-bottom: 20px;
-}
-
-/* Input Fields */
-.room-form input,
-.room-form select {
+    color: #333;
+  }
+  
+  .room-input {
     width: 100%;
-    padding: 10px;
-    margin: 10px 0;
+    padding: 10px 12px;
+    margin-bottom: 15px;
+    font-size: 16px;
     border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 16px;
-}
-
-/* Focus Effect */
-.room-form input:focus,
-.room-form select:focus {
+    border-radius: 6px;
+    transition: border 0.3s ease;
+  }
+  
+  .room-input:focus {
+    border-color: #4a90e2;
     outline: none;
-    border-color: #764ba2;
-}
-
-/* Checkbox */
-.room-form input[type="checkbox"] {
-    width: auto;
-    margin-right: 10px;
-}
-
-/* Checkbox Label */
-.room-form label {
-    font-size: 16px;
-    font-weight: 500;
-    color: #444;
+  }
+  
+  .room-checkbox-label {
     display: flex;
     align-items: center;
+    font-size: 15px;
+    color: #444;
+    margin-bottom: 20px;
     justify-content: flex-start;
-    width: 100%;
-}
-
-/* Modify Room Button */
-.room-form button {
+  }
+  
+  .room-checkbox {
+    margin-right: 10px;
+  }
+  
+  .room-submit-btn {
     width: 100%;
     padding: 10px;
-    background: #764ba2;
+    font-size: 16px;
+    background-color: #4a90e2;
     color: white;
     border: none;
-    border-radius: 5px;
-    font-size: 16px;
+    border-radius: 6px;
     cursor: pointer;
-    transition: background 0.3s ease;
-}
-
-.room-form button:hover {
-    background: #5a3c8c;
-}
-
-/* Error Message */
-.room-form .error {
-    color: red;
+    transition: background-color 0.3s ease;
+  }
+  
+  .room-submit-btn:hover {
+    background-color: #3b7dd8;
+  }
+  
+  .add-room-error {
+    color: #e53935;
     font-size: 14px;
-    margin-bottom: 10px;
-}
-
-/* Responsive Design */
-@media (max-width: 600px) {
-    .room-form {
-        width: 90%;
-        padding: 20px;
-    }
-
-    .back-btn {
-        top: 10px;
-        right: 10px;
-        font-size: 14px;
-        padding: 8px 12px;
-    }
-}
+    margin-bottom: 12px;
+  }

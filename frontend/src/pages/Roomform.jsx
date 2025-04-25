@@ -1,6 +1,8 @@
+
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate, useLocation } from "react-router-dom";
+// import './Roomform.css'
 
 const Roomform = () => {
   const [roomId, setRoomId] = useState("");
@@ -39,7 +41,7 @@ const Roomform = () => {
       setRoomOccupied(false);
 
       alert("Room successfully added.");
-      navigate(`/get-data/${Block.block_name}`, { state: { block: Block } });
+      navigate(`/aitam/${Block.block_name}`, { state: { block: Block } });
     } catch (error) {
       setErr("Failed to add room");
       console.error(error);
@@ -50,56 +52,66 @@ const Roomform = () => {
     setRoomOccupied((prevState) => !prevState); 
   };
 
+  const backhandler = () => {
+    navigate(`/aitam/${Block.block_name}`, {
+      state: { block: Block, from: "modify-room" }, 
+      replace: true,
+    });
+  };
   return (
-    <div className="room-form">
-      <h2>Add Room to Floor</h2>
-      {err && <p className="error">Error: {err}</p>}
-      <form onSubmit={handleAddRoom}>
+    <div className="add-room-wrapper">
+      <button className="back-btn" onClick={backhandler}>Back</button>
+  <div className="add-room-card">
+    <h2 className="add-room-title">Add Room to Floor</h2>
+    {err && <p className="add-room-error">Error: {err}</p>}
+    <form className="add-room-form" onSubmit={handleAddRoom}>
+      <input
+        type="text"
+        className="room-input"
+        value={roomId}
+        onChange={(e) => setRoomId(e.target.value)}
+        placeholder="Enter room Id"
+        required
+      />
+      <input
+        type="text"
+        className="room-input"
+        value={roomName}
+        onChange={(e) => setRoomName(e.target.value)}
+        placeholder="Enter room name"
+        required
+      />
+      <input
+        type="text"
+        className="room-input"
+        value={roomType}
+        onChange={(e) => setRoomType(e.target.value)}
+        placeholder="Enter room type"
+        required
+      />
+      <input
+        type="number"
+        className="room-input"
+        value={roomCapacity}
+        onChange={(e) => setRoomCapacity(Number(e.target.value))}
+        placeholder="Enter room capacity"
+        required
+      />
+      <label className="room-checkbox-label">
         <input
-          type="text"
-          value={roomId}
-          onChange={(e) => setRoomId(e.target.value)}
-          placeholder="Enter room Id"
-          required
+          type="checkbox"
+          className="room-checkbox"
+          checked={roomOccupied}
+          onChange={handleCheckboxChange}
         />
-        <input
-          type="text"
-          value={roomName}
-          onChange={(e) => setRoomName(e.target.value)}
-          placeholder="Enter room name"
-          required
-        />
-        <input
-          type="text"
-          value={roomType}
-          onChange={(e) => setRoomType(e.target.value)}
-          placeholder="Enter room type"
-          required
-        />
-        <input
-          type="number"
-          value={roomCapacity}
-          onChange={(e) => setRoomCapacity(Number(e.target.value))}
-          placeholder="Enter room capacity"
-          required
-        />
-        <label>
-          <input
-            type="checkbox"
-            checked={roomOccupied} 
-            onChange={handleCheckboxChange}
-          />
-          {/* Mark as Occupied */}
-        </label>
-        <button onClick={handleAddRoom}>Add Room</button>
-      </form>
-    </div>
+        Mark as Occupied
+      </label>
+      <button type="submit" className="room-submit-btn">Add Room</button>
+    </form>
+  </div>
+</div>
+
   );
 };
 
 export default Roomform;
-
-
-
-
-

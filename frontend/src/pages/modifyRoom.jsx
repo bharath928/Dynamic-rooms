@@ -41,7 +41,7 @@ const ModifyRoom = () => {
       );
 
       alert("Room modified successfully.");
-      navigate(`/get-data/${Block.block_name}`, {
+      navigate(`/aitam/${Block.block_name}`, {
          state: { block: Block, },
 
          });
@@ -51,61 +51,67 @@ const ModifyRoom = () => {
     }
   };
   const backhandler = () => {
-    navigate(`/get-data/${Block.block_name}`, {
-      state: { block: Block, from: "modify-room" }, // Pass state to FloorPage
-      replace: true, // Prevents adding this navigation to history
+    navigate(`/aitam/${Block.block_name}`, {
+      state: { block: Block, from: "modify-room" }, 
+      replace: true,
     });
   };
   return (
-    <div className="room-form-container">
-        {/* Back button at the top-right corner */}
-        <button className="back-btn" onClick={backhandler}>Back</button>
+    <div className="add-room-wrapper">
+  <button className="back-btn" onClick={backhandler}>Back</button>
 
-        {/* Centered form */}
-        <div className="room-form">
-            <h2>Update Room</h2>
-            {err && <p className="error">Error: {err}</p>}
-            <form>
-                <input
-                    type="text"
-                    value={roomId}
-                    onChange={(e) => setRoomId(e.target.value)}
-                    placeholder="Enter room Id"
-                    required
-                />
-                <input
-                    type="text"
-                    value={roomName}
-                    onChange={(e) => setRoomName(e.target.value)}
-                    placeholder="Enter room name"
-                    required
-                />
-                <input
-                    type="text"
-                    value={roomType}
-                    onChange={(e) => setRoomType(e.target.value)}
-                    placeholder="Enter room type"
-                    required
-                />
-                <input
-                    type="number"
-                    value={roomCapacity}
-                    onChange={(e) => setRoomCapacity(Number(e.target.value))}
-                    placeholder="Enter room capacity"
-                    required
-                />
-                <label>
-                    <input
-                        type="checkbox"
-                        checked={isOccupied}
-                        onChange={() => setIsOccupied(!isOccupied)}
-                    />
-                    Occupied
-                </label>
-                <button onClick={handleModifyRoom}>Modify Room</button>
-            </form>
-        </div>
-    </div>
+  <div className="add-room-card">
+    <h2 className="add-room-title">Update Room</h2>
+    {err && <p className="add-room-error">Error: {err}</p>}
+    <form className="add-room-form">
+      <input
+        type="text"
+        className="room-input"
+        value={roomId}
+        onChange={(e) => setRoomId(e.target.value)}
+        placeholder="Enter room Id"
+        required
+      />
+      <input
+        type="text"
+        className="room-input"
+        value={roomName}
+        onChange={(e) => setRoomName(e.target.value)}
+        placeholder="Enter room name"
+        required
+      />
+      <input
+        type="text"
+        className="room-input"
+        value={roomType}
+        onChange={(e) => setRoomType(e.target.value)}
+        placeholder="Enter room type"
+        required
+      />
+      <input
+        type="number"
+        className="room-input"
+        value={roomCapacity}
+        onChange={(e) => setRoomCapacity(Number(e.target.value))}
+        placeholder="Enter room capacity"
+        required
+      />
+      <label className="room-checkbox-label">
+        <input
+          type="checkbox"
+          className="room-checkbox"
+          checked={isOccupied}
+          onChange={() => setIsOccupied(!isOccupied)}
+        />
+        Occupied
+      </label>
+      <button className="room-submit-btn" onClick={handleModifyRoom}>
+        Modify Room
+      </button>
+    </form>
+  </div>
+</div>
+
 );
 };
 
