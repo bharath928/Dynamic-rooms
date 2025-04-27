@@ -2,36 +2,42 @@ const mongoose = require("mongoose")
 const { type } = require("os")
 
 const roomSchema = new mongoose.Schema({
-    room_id:{ // GF,FF...
-        type:String,
-        required:true,
-        default:""
-    },
-    room_name:{ // III CSE C,...
-        type:String,
-        required:true,
-        default:""
-    },
-    room_type:{//teaching,faculty cabins, labs,....
-        type:String,
-        required:true,
-        default:""
-    },
-    room_capacity:{
-        type:Number,
-        required:true,
-        default:0
-    },    
-    occupied:{
-        type:Boolean,
-        required:true,
-        default:false
-    },
-    lastModifiedDate:{
-        type:Date,
-        default:Date.now
-    }
-})
+    
+        room_id: {
+          type: String,
+          required: true,
+          default: "",
+        },
+        room_name: {
+          type: String,
+          required: true,
+          default: "",
+        },
+        room_type: {
+          type: String,
+          required: true,
+          default: "",
+        },
+        room_capacity: {
+          type: Number,
+          required: true,
+          default: 0,
+        },
+        occupied: {
+          type: Boolean,
+          required: true,
+          default: false,
+        },
+        lastModifiedDate: {
+          type: Date,
+          default: Date.now,
+        },
+        timetable: {
+          type: Array,   // << Add this to store JSON from Excel
+          default: [],
+        },
+      });
+      
 
 roomSchema.pre("save",(next)=>{
     this.lastModifiedDate = new Date();

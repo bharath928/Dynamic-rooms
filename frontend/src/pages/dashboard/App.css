@@ -1,0 +1,17 @@
+/* App.css or equivalent */
+body, html {
+    height: 100%;
+    margin: 0;
+  }
+  
+  .main-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Ensures the footer stays at the bottom when content is minimal */
+  }
+  
+  .content {
+    flex-grow: 1; /* Ensures that the content section expands to take available space */
+    padding-bottom: 50px; /* Prevents content from touching the footer */
+  }
+  
