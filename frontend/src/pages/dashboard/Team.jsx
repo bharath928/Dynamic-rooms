@@ -25,7 +25,7 @@ const teamData = [
     branch: 'CSE',
     roll: '22A51A05D9',
     email: 'sneha.reddy@example.com',
-    img: process.env.PUBLIC_URL + '/jagadeesh.jpg',
+    img: process.env.PUBLIC_URL + '/jagga.jpg',
     portfolio: 'https://snehareddy.me',
   },
   {

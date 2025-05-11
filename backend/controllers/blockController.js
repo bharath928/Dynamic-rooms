@@ -119,39 +119,6 @@ const deleteFloor = async(req,res)=>{
 }
 
 
-//Rooms Details...
-// const addroomDetails = async(req,res)=>{
-//     try{
-//         const {blockid,floorid} = req.params;
-//         const { room_id,room_name,room_type,room_capacity,} = req.body;
-
-//         const blockDetails = await block.findById(blockid);
-
-//         if(!blockDetails)
-//             return res.status(400).end("something went wronfg")
-        
-//         const floorDetails = blockDetails.floors.id(floorid)
-//         floorDetails.rooms.push({
-//             room_id:room_id,
-//             room_name:room_name,
-//             room_type:room_type,
-//             room_capacity:room_capacity,
-            
-//         })
-
-//         const updatedBlock = await blockDetails.save();
-
-//         if(!updatedBlock){
-//             alert("something went wrong")
-//             console.log(err)
-//         }
-//         res.status(200).json(updatedBlock)
-//     }catch(err){
-//         console.log(err)
-//     }
-// }
-
-
 const addroomDetails = async (req, res) => {
     try {
         const { blockid, floorid } = req.params;
@@ -180,48 +147,6 @@ const addroomDetails = async (req, res) => {
         res.status(500).json({ message: "Internal server error", error: err.message });
     }
 };
-
-
-
-// const updateRoomDetails = async (req, res) => {
-//     try {
-//         const { blockid, floorid, roomid } = req.params; // Corrected .params()
-//         const { room_id, room_name, room_type, room_capacity } = req.body;
-    
-//         // Find the block by its blockid
-//         const Block = await block.findById(blockid);
-//         if (!Block) {
-//             return res.status(404).json({ message: 'Block not found' });
-//         }
-    
-//         // Find the floor by floorid
-//         const floor = Block.floors.find(f => f._id.toString() === floorid);
-//         if (!floor) {
-//             return res.status(404).json({ message: 'Floor not found' });
-//         }
-    
-//         // Find the room by roomid
-//         const room = floor.rooms.find(r => r._id.toString() === roomid);
-//         if (!room) {
-//             return res.status(404).json({ message: 'Room not found' });
-//         }
-    
-//         // Update room details
-//         room.room_id = room_id || room.room_id; // Only update if a new value is provided
-//         room.room_name = room_name || room.room_name;
-//         room.room_type = room_type || room.room_type;
-//         room.room_capacity = room_capacity || room.room_capacity;
-    
-//         // Save the updated block document
-//         await Block.save();
-    
-//         // Return the updated room details as a response
-//         res.status(200).json(room);
-//     } catch (err) {
-//       console.error(err);
-//       res.status(500).json({ message: 'Server error', error: err.message });
-//     }
-// }
 
 const updateRoomDetails = async (req, res) => {
     try {
@@ -279,16 +204,6 @@ const deleteRoom = async (req, res) => {
     }
 }
 
-// const userRegister=  async (req, res) => {
-//     try {
-//       const { userId, password, role } = req.body;
-//       const newUser = new User({ userId, password, role });
-//       await newUser.save();
-//       res.status(201).json({ message: "User registered successfully", user: newUser });
-//     } catch (error) {
-//       res.status(400).json({ error: error.message });
-//     }
-// }
 
 //Dashboard for displaying the room based on the status...
 const blockStatus = async(req,res)=>{

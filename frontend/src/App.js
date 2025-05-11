@@ -76,7 +76,7 @@ const App = () => {
 
           {isAuthenticated ? (
             <>
-              <Route path="/" element={<ProtectedRoute><Homepage /></ProtectedRoute>} />
+              <Route path="/" element={<ProtectedRoute><Homepage footerHeight={footerHeight}/></ProtectedRoute>} />
               <Route path="/aitam" element={<ProtectedRoute><Blockform /></ProtectedRoute>} />
               <Route path="/aitam/:blockname" element={<ProtectedRoute><Floorpage /></ProtectedRoute>} />
               <Route path="/aitam/:blockId/:floorname" element={<ProtectedRoute><Roomform /></ProtectedRoute>} />

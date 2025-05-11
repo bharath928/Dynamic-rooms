@@ -7,7 +7,7 @@ import { toast, ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 
 
-const Homepage = () => {
+const Homepage = ({footerHeight}) => {
   const [block, setBlock] = useState([]);
   const [err, setErr] = useState("");
   const [loading, setLoading] = useState(true);
@@ -311,6 +311,7 @@ const [newBlockName, setNewBlockName] = useState("");
               zIndex: 999,
               overflowY: 'auto',
               padding: '20px',
+              paddingBottom:`${footerHeight}`,
               display: 'flex',
               flexWrap: 'wrap',
               justifyContent: 'center',
