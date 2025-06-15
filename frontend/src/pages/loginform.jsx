@@ -6,20 +6,18 @@ import AOS from "aos";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "aos/dist/aos.css";
 
-
 const Login = ({ setIsAuthenticated }) => {
   const [userId, setUserId] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false); 
   const [loading, setLoading] = useState(false); // <-- New loading state
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
- 
+  
   useEffect(() => {
     sessionStorage.clear();
   }, []);
-
 
   useEffect(() => {
     if (error) {
@@ -29,14 +27,12 @@ const Login = ({ setIsAuthenticated }) => {
     }
   }, [error]);
 
-
   useEffect(() => {
     AOS.init({
       duration: 1000,
       once: true,
     });
   }, []);
-
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -45,11 +41,9 @@ const Login = ({ setIsAuthenticated }) => {
       const payload = isAdmin ? { userId, password } : { userId };
       const res = await axios.post("http://localhost:5000/auth/login", payload);
 
-
       if (isAdmin && res) {
         await axios.get(`http://localhost:5000/auth/userDetails/${userId}`);
       }
-
 
       sessionStorage.setItem("token", JSON.stringify(res.data.token));
       setIsAuthenticated(true);
@@ -65,7 +59,6 @@ const Login = ({ setIsAuthenticated }) => {
     }
   };
 
-
   return (
     <div className="d-flex justify-content-center align-items-center vh-100 bg-light">
       <div
@@ -78,10 +71,8 @@ const Login = ({ setIsAuthenticated }) => {
         {/* Heading */}
         <h2 className="mb-3 text-dark">{isAdmin ? "Admin Login" : "Student Login"}</h2>
 
-
         {/* Error Message */}
         {error && <p className="text-danger small">{error}</p>}
-
 
         {/* Login Form */}
         <form onSubmit={handleSubmit}>
@@ -96,7 +87,6 @@ const Login = ({ setIsAuthenticated }) => {
               disabled={loading} // <-- Disable input during loading
             />
           </div>
-
 
           {/* Password Field (Only for Admin) */}
           {isAdmin && (
@@ -126,12 +116,11 @@ const Login = ({ setIsAuthenticated }) => {
             </div>
           )}
 
-
           {/* Login Button */}
           <button type="submit" className="btn btn-primary w-100" disabled={loading}>
             {loading ? (
               <>
-                <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> 
                 &nbsp;Logging in...
               </>
             ) : (
@@ -139,7 +128,6 @@ const Login = ({ setIsAuthenticated }) => {
             )}
           </button>
         </form>
-
 
         {/* Toggle Login Type */}
         <p
@@ -154,7 +142,4 @@ const Login = ({ setIsAuthenticated }) => {
   );
 };
 
-
 export default Login;
-
-

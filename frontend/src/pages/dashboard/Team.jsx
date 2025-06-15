@@ -1,5 +1,4 @@
 import React, { useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { FaEnvelope, FaIdBadge } from 'react-icons/fa';
 
@@ -39,11 +38,11 @@ const teamData = [
 ];
 
 const Team = () => {
-  const navigate = useNavigate();
   const scrollRef = useRef(null);
 
   useEffect(() => {
     const scrollContainer = scrollRef.current;
+
     let scrollAmount = 0;
     const scrollStep = 1;
     const scrollDelay = 10;
@@ -64,17 +63,7 @@ const Team = () => {
   }, []);
 
   return (
-    <div className="container mt-5 mb-5 position-relative">
-    {/* Back Button */}
-    <button
-      className="btn btn-danger position-fixed"
-      style={{ top: '20px', right: '20px', zIndex: 1000 }}
-      onClick={() => navigate(-1)}
-    >
-      Back
-    </button>
-  
-
+    <div className="container mt-5 mb-5">
       <h2 className="text-center mb-4 fw-bold">🌟 Meet Our Team 🌟</h2>
 
       <div

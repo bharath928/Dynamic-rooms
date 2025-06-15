@@ -97,9 +97,21 @@ const uploadTimetableFromExcel = async (req, res) => {
 };
 
 
+const getAvailableTimetableRooms = async (req, res) => {
+  try {
+    const timetables = await Timetable.find({}, 'className');
+    const roomNames = timetables.map(t => t.className); 
+    res.json(roomNames); 
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
+
+
 const getTimetableByClass = async (req, res) => {
   try {
-    // console.log("classname");
     const { className } = req.params;
     const timetable = await Timetable.findOne({ className });
     if (!timetable) {
@@ -129,4 +141,4 @@ const deleteTimetable =async (req, res) => {
   }
 };
 
-module.exports = { uploadTimetableFromExcel,getTimetableByClass,deleteTimetable };
+module.exports = { uploadTimetableFromExcel,getTimetableByClass,deleteTimetable,getAvailableTimetableRooms };

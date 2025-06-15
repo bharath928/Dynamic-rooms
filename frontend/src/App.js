@@ -1,3 +1,4 @@
+// App.js
 import React, { useEffect, useState, useRef } from "react";
 import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import Homepage from "./pages/Homepage";
@@ -15,15 +16,12 @@ import RoomsOverview from "./pages/RoomsOverview.jsx";
 import Footer from "./pages/dashboard/Footer.jsx";
 import Team from "./pages/dashboard/Team.jsx";
 
-
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(!!sessionStorage.getItem("token"));
   const navigate = useNavigate();
 
-
   const footerRef = useRef(null);
   const [footerHeight, setFooterHeight] = useState(0);
-
 
   useEffect(() => {
     const updateFooterHeight = () => {
@@ -32,16 +30,13 @@ const App = () => {
       }
     };
 
-
     updateFooterHeight();  // Initial call
     window.addEventListener('resize', updateFooterHeight);
-
 
     return () => {
       window.removeEventListener('resize', updateFooterHeight);
     };
   }, []);
-
 
   useEffect(() => {
     const shortcutKeys = (e) => {
@@ -51,28 +46,24 @@ const App = () => {
       }
     };
 
-
     window.addEventListener("keydown", shortcutKeys);
     return () => {
       window.removeEventListener("keydown", shortcutKeys);
     };
   }, [navigate]);
 
-
   useEffect(() => {
     const token = sessionStorage.getItem("token");
     setIsAuthenticated(!!token);
   }, []);
 
-
   return (
-    <div className="d-flex flex-column min-vh-100">
+    <div className="d-flex flex-column min-vh-100" style={{ overflowX: 'hidden' }}>
       {/* Add padding bottom equal to footer height */}
       <div style={{ paddingBottom: `${footerHeight}px` }}>
         <Routes>
           <Route path="/login" element={<Login setIsAuthenticated={setIsAuthenticated} />} />
           <Route path="/team" element={<Team />} />
-
 
           {isAuthenticated ? (
             <>
@@ -94,6 +85,5 @@ const App = () => {
     </div>
   );
 };
-
 
 export default App;

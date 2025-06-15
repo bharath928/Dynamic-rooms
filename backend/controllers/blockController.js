@@ -39,6 +39,21 @@ const getBlockDetailsbyId = async (req,res)=>{
     }
 }
 
+const getBlockDetailsbyName = async (req,res)=>{
+    const {name}= req.params;
+    try{
+        const result = await block.findOne({"block_name":name});
+        if(!result) {
+            console.log("result not found..")
+        }
+        res.status(200).json(result)
+    }
+    catch(err){
+        console.error(err)
+        res.status(400).json({"msg":"something went wrong..."})
+    }
+}
+
 const modifyBlock = async(req,res)=>{
     try{
         const {id} = req.params;
@@ -150,6 +165,7 @@ const addroomDetails = async (req, res) => {
 
 const updateRoomDetails = async (req, res) => {
     try {
+        console.log("backend updated")
         const { blockid, floorid, roomid } = req.params;
         const { room_id, room_name, room_type, room_capacity, occupied } = req.body; // ✅ Include occupied field
 
@@ -231,4 +247,4 @@ const blockStatus = async(req,res)=>{
 }
 
 
-module.exports = {createBlock,getBlockDetails,getBlockDetailsbyId,deleteBlock,updateBlockDetailsbyId,addroomDetails,updateRoomDetails,deleteFloor,deleteRoom,modifyBlock,blockStatus}
+module.exports = {createBlock,getBlockDetails,getBlockDetailsbyId,getBlockDetailsbyName,deleteBlock,updateBlockDetailsbyId,addroomDetails,updateRoomDetails,deleteFloor,deleteRoom,modifyBlock,blockStatus}

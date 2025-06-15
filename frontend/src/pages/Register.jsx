@@ -11,14 +11,15 @@ import "aos/dist/aos.css";
 const Register = () => {
     const [userId, setUserId] = useState("");
     const [password, setPassword] = useState("");
+    const [crole, setcrole] = useState("");
     const [role, setRole] = useState("");
     const [dept, setDept] = useState("");
     const [message, setMessage] = useState("");
-    const navigate = useNavigate();
     const [blockNames, setBlockNames] = useState([]);
+    const [loading, setLoading] = useState(false)
+    
+    const navigate = useNavigate();
 
-    //Shortcut Keys...
-   
 
     useEffect(() => {
         const fetch = async () => {
@@ -41,7 +42,7 @@ const Register = () => {
     const handleRegister = async (e) => {
         e.preventDefault();
         const token = localStorage.getItem("token");
-
+        setLoading(true)
         try {
             const response = await fetch("http://localhost:5000/auth/register", {
                 method: "POST",
@@ -49,7 +50,7 @@ const Register = () => {
                     "Content-Type": "application/json",
                     "Authorization": `Bearer ${token}`
                 },
-                body: JSON.stringify({ userId, password, dept })
+                body: JSON.stringify({ userId, password, dept ,crole})
             });
 
             const data = await response.json();
@@ -59,9 +60,16 @@ const Register = () => {
             } else {
                 setMessage(`Error: ${data.message}`);
             }
+
+            setTimeout(() => {
+              setMessage("")
+            }, 2000);
+
         } catch (error) {
-            setMessage("Something went wrong!");
-            console.error("Error:", error);
+            setMessage(error.response.data.message || "something went wrong..");
+            // console.error("Error:", error);
+        }finally{
+          setLoading(false)
         }
     };
 
@@ -115,11 +123,24 @@ const Register = () => {
         </select>
       </div>
 
-      <p className="register-note text-center text-muted">Register for new Admin</p>
+      <div className="register-input mb-3">
+        <select
+          className="form-select"
+          onChange={(e) => setcrole(e.target.value) }
+        >
+            <>
+              <option value="">Select the role</option>
+              <option value="admin">ADMIN</option>
+              <option value="cr">CR</option>
+            </>
+        </select>
+      </div>
+
+      {/* <p className="register-note text-center text-muted">Register for new Admin</p> */}
 
       <div className="d-flex justify-content-between gap-2">
-        <button type="submit" className="btn btn-primary flex-grow-1">
-          Register
+        <button type="submit" className="btn btn-primary flex-grow-1" disabled={loading}>
+          {loading ? "Registering...":"Register"}
         </button>
         <button
           type="button"

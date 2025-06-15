@@ -8,6 +8,7 @@ router.post("/add-data",blockController.createBlock)
 
 router.get("/get-data",blockController.getBlockDetails)
 router.get("/get-data/:id",blockController.getBlockDetailsbyId)
+router.get("/get-data-name/:name",blockController.getBlockDetailsbyName)
 router.put("/update-data/:id",blockController.modifyBlock)
 router.delete("/delete-data/:id",blockController.deleteBlock)
 

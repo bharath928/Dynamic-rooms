@@ -27,9 +27,10 @@ const router = express.Router();
 const multer = require('multer');
 const upload = multer(); // For buffer uploads
 
-const { uploadTimetableFromExcel,getTimetableByClass, deleteTimetable } = require('../controllers/periodsController');
+const { uploadTimetableFromExcel,getTimetableByClass, deleteTimetable,getAvailableTimetableRooms } = require('../controllers/periodsController');
 
 router.post('/upload', upload.single('file'), uploadTimetableFromExcel);
+router.get("/available-timetables", getAvailableTimetableRooms);
 router.get('/:className', getTimetableByClass);
 router.delete('/class/:className',deleteTimetable);
 
