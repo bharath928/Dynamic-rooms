@@ -296,7 +296,10 @@ const Homepage = ({footerHeight}) => {
         <div className={`row g-2 ${searchTerm !== '' ? 'blur-content' : ''}`}>
           {block.map((e, index) => (
             <div key={index} className="col-12 col-md-6 col-lg-3">
-              <div className="card shadow-sm border-0 p-2">
+              <div
+  className="card shadow-sm p-2"
+  style={{ border: "1px solid #003366" }} // Dark blue border
+>
                 <div
                   className="card-content text-center"
                   onClick={() => navigate(`/aitam/${e.block_name}`)}
