@@ -22,16 +22,37 @@
 // module.exports = router;
 
 
+// const express = require('express');
+// const router = express.Router();
+// const multer = require('multer');
+// const upload = multer(); // For buffer uploads
+
+// const { uploadTimetableFromExcel,getTimetableByClass, deleteTimetable,getAvailableTimetableRooms } = require('../controllers/periodsController');
+
+// router.post('/upload', upload.single('file'), uploadTimetableFromExcel);
+// router.get("/available-timetables", getAvailableTimetableRooms);
+// router.get('/:className', getTimetableByClass);
+// router.delete('/class/:className',deleteTimetable);
+
+// module.exports = router;
+
+
 const express = require('express');
 const router = express.Router();
 const multer = require('multer');
 const upload = multer(); // For buffer uploads
 
-const { uploadTimetableFromExcel,getTimetableByClass, deleteTimetable,getAvailableTimetableRooms } = require('../controllers/periodsController');
+const { uploadTimetableFromExcel,getTimetables,deleteTimetable,getAllTimetables } = require('../controllers/periodsController');
 
 router.post('/upload', upload.single('file'), uploadTimetableFromExcel);
-router.get("/available-timetables", getAvailableTimetableRooms);
-router.get('/:className', getTimetableByClass);
-router.delete('/class/:className',deleteTimetable);
+router.get("/fetchBlocksTimetables",getAllTimetables);
+router.get("/blockTimetables/:blockName",getTimetables)
+router.patch("/delete/:blockName/:className",deleteTimetable)
+
+// router.get("/available-timetables", getAvailableTimetableRooms);
+// router.get('/:className', getTimetableByClass);
+// router.delete('/class/:className',deleteTimetable);
 
 module.exports = router;
+
+

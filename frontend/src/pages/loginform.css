@@ -1,86 +1,27 @@
-.login-container {
+.login-page-wrapper {
+  position: relative;
+  background-image: url('./AITAM.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
-  background-color: #f4f4f4;
-}
-
-.login-box {
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-  text-align: center;
-  width: 300px;
-}
-
-h2 {
-  margin-bottom: 10px;
-}
-
-input {
-  width: 100%;
-  padding: 10px;
-  margin: 10px 0;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-}
-
-.login-button {
-  width: 100%;
-  padding: 10px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.toggle-login {
-  margin-top: 10px;
-  color: #007bff;
-  cursor: pointer;
-  font-size: 14px;
-}
-
-.toggle-login:hover {
-  text-decoration: underline;
-}
-
-.error-message {
-  color: red;
-  font-size: 14px;
-  margin-bottom: 10px;
-}
-
-
-.login-page-wrapper {
-  position: relative;
-  min-height: 100vh;
+  padding: 1rem;
   overflow: hidden;
 }
 
 .login-page-wrapper::before {
   content: "";
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-image: url("./AITAM.jpg"); 
-  background-size: cover;
-  background-position: center;
-  filter: blur(5px);
-  z-index: -1;
+  position: absolute;
+  inset: 0;
+  backdrop-filter: blur(5px); 
+  background-color: rgba(255, 255, 255, 0.2); 
+  z-index: 1;
 }
 
-/* .login-page-wrapper::after {
-  content: "";
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(255, 255, 255, 0.3); 
-  z-index: -1;
-} */
+.login-page-wrapper > div {
+  position: relative;
+  z-index: 2; 
+}

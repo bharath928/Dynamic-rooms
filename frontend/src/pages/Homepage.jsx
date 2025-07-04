@@ -240,6 +240,7 @@ const Homepage = ({footerHeight}) => {
                     <li><button className="dropdown-item text-primary" onClick={dashboardHandler}>Dashboard</button></li>
                   )}
                   <li><button className="dropdown-item text-warning" onClick={roomsOverview}>Rooms Overview</button></li>
+                  <li><button className="dropdown-item text-success" onClick={()=>{navigate('/findFaculty')}}>Find Faculty</button></li>
                   <li><button className="dropdown-item text-danger" onClick={handleSignOut}>Sign Out</button></li>
                 </ul>
               )}

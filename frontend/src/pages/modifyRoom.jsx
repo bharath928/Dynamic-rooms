@@ -12,7 +12,7 @@ const ModifyRoom = () => {
   const [err, setErr] = useState("");
   const navigate = useNavigate();
   
-
+    
   const { state } = useLocation();
   const [floor, setFloorId] = useState(state.floor);
   const [Block, setBlockId] = useState(state.Block);
@@ -26,30 +26,84 @@ const ModifyRoom = () => {
     setIsOccupied(Room.occupied); 
   }, []);
 
+  // const handleModifyRoom = async (e) => {
+  //   e.preventDefault();
+  //   try {
+  //     await axios.put(
+  //       `http://localhost:5000/block/floors/room/${Block._id}/${floor._id}/${Room._id}`,
+  //       {
+  //         room_id: roomId,
+  //         room_name: roomName,
+  //         room_type: roomType,
+  //         room_capacity: roomCapacity,
+  //         occupied: isOccupied, 
+  //       }
+  //     );
+
+  //     alert("Room modified successfully.");
+  //     navigate(`/aitam/${Block.block_name}`, {
+  //        state: { block: Block, },
+
+  //        });
+  //   } catch (error) {
+  //     setErr("Failed to modify room");
+  //     console.error(error);
+  //   }
+  // };
+
   const handleModifyRoom = async (e) => {
-    e.preventDefault();
-    try {
-      await axios.put(
-        `http://localhost:5000/block/floors/room/${Block._id}/${floor._id}/${Room._id}`,
-        {
+  e.preventDefault();
+  try {
+    // 1. Prepare updated room
+    const updatedRoom = {
+      room_id: roomId,
+      room_name: roomName,
+      room_type: roomType,
+      room_capacity: roomCapacity,
+      occupied: isOccupied,
+      lastModifiedDate:new Date(),
+      _id: Room._id, // include _id to match original room
+    };
+
+    // 2. Send to server
+    await axios.put(
+      `http://localhost:5000/block/floors/room/${Block._id}/${floor._id}/${Room._id}`,
+      {
           room_id: roomId,
           room_name: roomName,
           room_type: roomType,
           room_capacity: roomCapacity,
           occupied: isOccupied, 
         }
-      );
+    );
 
-      alert("Room modified successfully.");
-      navigate(`/aitam/${Block.block_name}`, {
-         state: { block: Block, },
-
-         });
-    } catch (error) {
-      setErr("Failed to modify room");
-      console.error(error);
+    // ✅ 3. Update the room in the floor's room array (in the same index)
+    const updatedRooms = [...floor.rooms];
+    const index = updatedRooms.findIndex((r) => r._id === Room._id);
+    if (index !== -1) {
+      updatedRooms[index] = updatedRoom;
     }
-  };
+
+    const updatedFloor = {
+      ...floor,
+      rooms: updatedRooms,
+    };
+
+    // ✅ 4. Save updated floor to sessionStorage
+    sessionStorage.setItem("selectedFloor", JSON.stringify(updatedFloor));
+
+    // ✅ 5. Navigate back and pass updated block (optional)
+    alert("Room modified successfully.");
+    navigate(`/aitam/${Block.block_name}`, {
+      state: { block: Block },
+    });
+  } catch (error) {
+    setErr(error.message);
+    console.error(error);
+  }
+};
+
+
   const backhandler = () => {
     navigate(`/aitam/${Block.block_name}`, {
       state: { block: Block, from: "modify-room" }, 

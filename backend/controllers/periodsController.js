@@ -1,9 +1,7 @@
 
-
 const xlsx = require('xlsx');
-const Timetable = require('../models/timetable');
+const Timetable = require('../models/blocktimetable');
 
-// Helper: Process sheet into day-wise format
 
 const convertExcelTimeToHHMM = (excelTime) => {
   if (typeof excelTime === "number") {
@@ -18,7 +16,9 @@ const convertExcelTimeToHHMM = (excelTime) => {
   }
   return "00:00"; // Fallback
 };
-const processTimetableData = (sheetData, className) => {
+
+
+const processTimetableData = (sheetData) => {
   const requiredFields = ['Day', 'PeriodNumber', 'StartTime', 'EndTime', 'Subject', 'Faculty'];
   const days = {};
 
@@ -47,98 +47,116 @@ const processTimetableData = (sheetData, className) => {
     });
   });
 
-  const timetableData = Object.entries(days).map(([dayName, periods]) => ({
+   return Object.entries(days).map(([dayName, periods]) => ({
     dayName,
     periods,
   }));
 
-  return { className, timetableData };
+  // return {  timetableData };
 };
 
-// Controller: Upload Excel → Save to DB
+
 const uploadTimetableFromExcel = async (req, res) => {
   try {
-    const { className } = req.body;
+    const { blockName, className } = req.body;
     const file = req.file;
 
-    // Class name is required
-    if (!className || className.trim() === '') {
-      return res.status(400).json({ message: 'Class name is required.' });
+    if (!blockName || !className) {
+      return res.status(400).json({ message: 'blockName and className are required.' });
     }
 
     if (!file) {
-      return res.status(400).json({ message: 'No file uploaded.' });
+      return res.status(400).json({ message: 'No Excel file uploaded.' });
     }
 
     const workbook = xlsx.read(file.buffer, { type: 'buffer' });
-    const sheetName = workbook.SheetNames[0];
-    const sheetData = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName], { defval: '' });
+    const sheet = workbook.Sheets[workbook.SheetNames[0]];
+    const sheetData = xlsx.utils.sheet_to_json(sheet, { defval: '' });
 
     if (!sheetData || sheetData.length === 0) {
-      return res.status(400).json({ message: 'Excel file is empty or improperly formatted.' });
+      return res.status(400).json({ message: 'Excel sheet is empty or improperly formatted.' });
     }
 
-    const structuredData = processTimetableData(sheetData, className);
+    // Process the timetable data
+    const timetableData = processTimetableData(sheetData);
+    
+    // 🧱 Find or create block
+    const block = await Timetable.findOne({ blockName });
 
-    const existing = await Timetable.findOne({ className });
-    if (existing) {
-      return res.status(400).json({ message: `Timetable already exists for ${className}.` });
+    if (!block) {
+      await Timetable.create({
+        blockName,
+        rooms: [{ className, timetableData }]
+      });
+      return res.status(201).json({ message: 'Block and room timetable created successfully.' });
     }
 
-    const newTimetable = new Timetable(structuredData);
-    await newTimetable.save();
+    // 🔁 Update or insert room within block
+    const existingRoomIndex = block.rooms.findIndex(r => r.className === className);
 
-    res.status(201).json({ message: 'Timetable uploaded successfully!' });
+    if (existingRoomIndex !== -1) {
+      block.rooms[existingRoomIndex].timetableData = timetableData;
+    } else {
+      block.rooms.push({ className,timetableData });
+    }
+
+    await block.save();
+    res.status(200).json({ message: 'Room timetable uploaded successfully.' });
 
   } catch (err) {
-    console.error("Error while uploading timetable:", err);
+    console.error("Upload error:", err);
     res.status(500).json({ message: 'Server Error while uploading timetable.' });
   }
 };
 
 
-const getAvailableTimetableRooms = async (req, res) => {
+
+const getTimetables = async (req, res) => {
   try {
-    const timetables = await Timetable.find({}, 'className');
-    const roomNames = timetables.map(t => t.className); 
-    res.json(roomNames); 
+    const { blockName } = req.params;
+    const response = await Timetable.findOne({ blockName });
+
+    if (!response) {
+      return res.status(404).json({ message: "Block not found." });
+    }
+
+    res.status(200).json(response.rooms);
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Server Error" });
+    res.status(500).json({ message: err.message });
   }
 };
 
-
-
-const getTimetableByClass = async (req, res) => {
+const deleteTimetable = async (req, res) => {
   try {
-    const { className } = req.params;
-    const timetable = await Timetable.findOne({ className });
-    if (!timetable) {
-      return res.status(404).json({ message: 'Timetable not found.' });
+    const { blockName, className } = req.params;
+
+    const result = await Timetable.updateOne(
+      { blockName },
+      { $pull: { rooms: { className } } }
+    );
+
+    if (result.matchedCount === 0) {
+      return res.status(404).json({ msg: "Block not founding" });
     }
-    res.json(timetable);
+
+    if (result.modifiedCount === 0) {
+      return res.status(400).json({ msg: "Class not found in block" });
+    }
+
+    res.status(200).json({ msg: "ClassRoom is deleted successfully" });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'Server Error' });
+    res.status(500).json({ msg: err.message });
   }
 };
 
-const deleteTimetable =async (req, res) => {
+const getAllTimetables = async (req, res) => {
   try {
-    console.log("delted");
-    const { className } = req.params;
-    const deleted = await Timetable.deleteOne({ className });
-
-    if (deleted.deletedCount === 0) {
-      return res.status(404).json({ message: "Timetable not found for this class." });
-    }
-
-    res.status(200).json({ message: "Timetable deleted successfully." });
+    const timetables = await Timetable.find();
+    res.status(200).json(timetables);
   } catch (error) {
-    console.error("Error deleting timetable:", error);
-    res.status(500).json({ message: "Server error while deleting timetable." });
+    console.error('Error fetching timetables:', error.message);
+    res.status(500).json({ message: 'Server error while fetching timetables' });
   }
 };
 
-module.exports = { uploadTimetableFromExcel,getTimetableByClass,deleteTimetable,getAvailableTimetableRooms };
+module.exports = { uploadTimetableFromExcel,getTimetables,deleteTimetable,getAllTimetables};

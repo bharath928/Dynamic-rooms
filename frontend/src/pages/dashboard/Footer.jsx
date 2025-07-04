@@ -23,7 +23,8 @@ const Footer = forwardRef((props, ref) => {  // Correct: (props, ref)
       <p className="mb-1">
         Developed by{' '}
         <span
-          onClick={() => navigate('/team')}
+          onClick={() =>window.open('/team', '_blank')}
+
           style={{
             cursor: 'pointer',
             textDecoration: 'underline',

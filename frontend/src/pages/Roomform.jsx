@@ -68,7 +68,7 @@ const Roomform = () => {
       <input
         type="text"
         className="room-input"
-        value={roomId}
+        value={roomId+"-"}
         onChange={(e) => setRoomId(e.target.value)}
         placeholder="Enter room Id"
         required

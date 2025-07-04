@@ -21,40 +21,53 @@ const Blockform = () => {
   };
 
   return (
-    <div className="add-block-wrapper d-flex justify-content-center align-items-center min-vh-100">
-      <div className="add-block-card p-4 rounded shadow bg-white" style={{ width: "100%", maxWidth: "500px" }}>
-        
-        {/* Header with Title and Back Button */}
-        <div className="d-flex justify-content-between align-items-center mb-4">
-          <h2 className="add-block-title m-0 text-primary">Add Block</h2>
-          <button
-            className="btn btn-outline-secondary btn-sm"
-            onClick={() => navigate("/")}
-          >
-            ← Back
-          </button>
-        </div>
+   <div className="add-block-wrapper d-flex justify-content-center align-items-center min-vh-100 position-relative">
+  
+  {/* Back Button at top-right */}
+  <button
+    className="btn btn-outline-primary position-absolute"
+    style={{ top: "20px", right: "20px", zIndex: 10 }}
+    onClick={() => navigate("/")}
+  >
+    ← Back
+  </button>
 
-        {err && <p className="add-block-error text-danger">Error: {err}</p>}
-        <form onSubmit={handleSubmit}>
-          <div className="add-block-input-group mb-3">
-            <label className="form-label">
-              Block Name:
-              <input
-                type="text"
-                className="form-control mt-1"
-                value={blockName}
-                onChange={(e) => setBlockName(e.target.value)}
-                required
-              />
-            </label>
-          </div>
-          <button type="submit" className="add-block-btn btn btn-primary w-100">
-            Add Block
-          </button>
-        </form>
+  
+  <div
+    className="add-block-card p-4 rounded shadow bg-white"
+    style={{ width: "100%", maxWidth: "500px" }}
+  >
+    
+    <h2 className="text-center text-primary mb-4">Add Block</h2>
+
+    {/* Error */}
+    {err && <p className="add-block-error text-danger">Error: {err}</p>}
+
+    {/* Form */}
+    <form onSubmit={handleSubmit}>
+      <div className="add-block-input-group mb-4 d-flex align-items-center justify-content-between">
+        <label className="form-label m-0 me-3" style={{ minWidth: "120px" }}>
+          Block Name:
+        </label>
+        <input
+          type="text"
+          placeholder='Enter the Block Name'
+          className="form-control"
+          value={blockName}
+          onChange={(e) => setBlockName(e.target.value)}
+          required
+          style={{ flex: 1 }}
+        />
       </div>
-    </div>
+
+      <button type="submit" className="add-block-btn btn btn-primary w-100">
+        Add Block
+      </button>
+    </form>
+  </div>
+</div>
+
+
   );
 };
 

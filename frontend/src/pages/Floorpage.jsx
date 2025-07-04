@@ -46,7 +46,7 @@ const Floorpage = () => {
   const [filterStatus, setFilterStatus] = useState("all");
   const [filterRoomType, setFilterRoomType] = useState("all");
   const [loading,setLoading] = useState(false)
-  const [timetables, setTimetables] = useState({});
+  const [timetables, setTimetables] = useState([]);
    const [selectedFile, setSelectedFile] = useState(null);
   const [previewData, setPreviewData] = useState([]);
 
@@ -93,10 +93,19 @@ const Floorpage = () => {
 
   }, [blockname,roomdata]);
 
+  //make the timetable array into a object of {className,timetableData}
+  const timetableMap = React.useMemo(
+  () =>
+    Object.fromEntries(
+      timetables.map(t => [t.className, t.timetableData]) // { "XYZ": […], "2 CSE C": […] }
+    ),
+  [timetables]
+);
+
   useEffect(()=>{
     const updateOccupancy = async () => {
     for (const room of roomdata) {
-      const timetable = timetables[room.room_name];
+      const timetable = timetableMap[room.room_name];
  
       if (!timetable) continue;
       const now = new Date();
@@ -105,7 +114,8 @@ const Floorpage = () => {
       hour = hour % 12;
       hour = hour ? hour : 12; 
       const periodinfo = getCurrentPeriod(timetable, hour, minute);
-
+      // console.log(periodinfo)
+      
       const shouldBeOccupied = periodinfo.status === "Ongoing";
       if (room.occupied !== shouldBeOccupied) {
         try {
@@ -116,7 +126,7 @@ const Floorpage = () => {
             },
             body: JSON.stringify({ occupied: shouldBeOccupied }),
           });
-          console.log(`Updated occupancy for ${room.room_name}`);
+          // console.log(`Updated occupancy for ${room.room_name}`);
         } catch (error) {
           console.error(`Failed to update room ${room.room_name}:`, error);
         }
@@ -128,6 +138,7 @@ const Floorpage = () => {
   updateOccupancy();
   },[timetables])
 
+//Taking the floorDetails from the sessionStorage....
 
 useEffect(() => {
   const savedFloor = sessionStorage.getItem("selectedFloor");
@@ -140,57 +151,72 @@ useEffect(() => {
     } catch (error) {
       console.error("Invalid JSON in sessionStorage for 'selectedFloor'", error);
       sessionStorage.removeItem("selectedFloor"); 
-      setFloorid(null); 
+setFloorid(null); 
       setRoomData([]);
     }
   }
 }, []);
 
+// useEffect(() => {
+//   const savedFloor = sessionStorage.getItem("selectedFloor");
+
+//   if (savedFloor) {
+//     try {
+//       const parsedFloor = JSON.parse(savedFloor);
+
+//       // ✅ Find the latest matching floor in the updated block data
+//       const updatedFloor = block?.floors?.find(
+//         (floor) => floor.floor_name === parsedFloor.floor_name
+//       );
+
+//       if (updatedFloor) {
+//         // ✅ Update sessionStorage and state with fresh data
+//         const updatedSelectedFloor = {
+//           ...updatedFloor,
+//           rooms: updatedFloor.rooms, // Or get fresh room data separately if needed
+//         };
+
+//         sessionStorage.setItem("selectedFloor", JSON.stringify(updatedSelectedFloor));
+//         // window.location.reload();
+//         setFloorid(updatedSelectedFloor);
+//         setRoomData(updatedSelectedFloor.rooms);
+//       } else {
+//         // Fallback to old parsedFloor if no matching floor in block data
+//         setFloorid(parsedFloor);
+//         setRoomData(parsedFloor.rooms);
+//       }
+//     } catch (error) {
+//       console.error("Invalid JSON in sessionStorage for 'selectedFloor'", error);
+//       sessionStorage.removeItem("selectedFloor");
+//       setFloorid(null);
+//       setRoomData([]);
+//     }
+//   }
+// }, []);
 
 
+//Update the floorDetails in sessionStorage also....
 
- const getRoomsWithTimetable = async () => {
-  const res = await fetch('http://localhost:5000/periods/available-timetables');
-  const roomNames = await res.json(); 
-  return roomNames;
-};
+useEffect(() => {
+  if (!floorid) return;
 
-const fetchTimetables = async () => {
-  try {
-    setLoading(true);
-    const results = {};
+  const updated = { ...floorid, rooms: roomdata };
+  sessionStorage.setItem("selectedFloor", JSON.stringify(updated));
+}, [roomdata, floorid]);
 
-    const roomsWithTimetable = await getRoomsWithTimetable(); 
-    
-    const fetchPromises = roomdata
-      .filter(room => roomsWithTimetable.includes(room.room_name))
-      .map(async (room) => {
-        const encodedName = encodeURIComponent(room.room_name);
-        try {
-          const res = await fetch(`http://localhost:5000/periods/${encodedName}`);
-          if (res.ok) {
-            const data = await res.json();
-            results[room.room_name] = data.timetableData;
-          } else {
-            results[room.room_name] = null;
-          }
-        } catch (err) {
-          results[room.room_name] = [];
-        }
-      });
 
-    await Promise.all(fetchPromises);
-    setTimetables(results);
-  } catch (e) {
-    console.error(e.message);
-  } finally {
-    setLoading(false);
+const fetchTimetables = async()=>{
+  try{
+    const {data} = await axios.get(`http://localhost:5000/periods/blockTimetables/${blockname}`)
+    // console.log(data)
+    setTimetables(data)
+  }catch(err){
+    console.log(err.message)
   }
-};
+}
 
 
-
-  const handleFileUpload = (e) => {
+  function handleFileUpload(e) {
     const file = e.target.files[0];
     setSelectedFile(file);
 
@@ -204,13 +230,79 @@ const fetchTimetables = async () => {
       const parsedData = XLSX.utils.sheet_to_json(sheet, { defval: '' });
       setPreviewData(parsedData);
     };
-  };
+  }
+
+// const getCurrentPeriod = (timetable, testHour = null, testMin = null) => {
+//   try{
+//     if (!timetable || !Array.isArray(timetable)) {
+//     return { status: "Invalid timetable" }; 
+//   }
+//   const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+//   const now = new Date();
+
+//   if (testHour !== null && testMin !== null) {
+//     now.setHours(testHour);
+//     now.setMinutes(testMin);
+//   }
+
+//   const today = days[now.getDay()];
+//   if (today === "Sunday") return { status: "Sunday is Holiday" };
+
+//   const currentHour = now.getHours();
+//   const currentMin = now.getMinutes();
+//   const currentTime = currentHour * 60 + currentMin;
+//   if (currentTime > 16 * 60 + 20) return { status: "No Classes" };
+//   const todayData = timetable.find(day => day.dayName === today);
+//   if (!todayData || !todayData.periods?.length) return { status: "No Classes" };
+//   const parseTime = (timeStr) => {
+//   const [time, modifier] = timeStr.trim().split(" ");
+//   let [hours, minutes] = time.split(":").map(Number);
+
+//   if (modifier === "PM" && hours !== 12) hours += 12;
+//   if (modifier === "AM" && hours === 12) hours = 0;
+
+//   return hours * 60 + minutes;
+// };
+
+//   const currentPeriod = todayData.periods.find(period => {
+//     const start = parseTime(period.startTime);
+//     const end = parseTime(period.endTime);
+//     return currentTime >= start && currentTime <= end;
+//   });
+
+
+//   if (currentPeriod) {
+//     return {
+//       status: "Ongoing",
+//       info: (
+//         <>
+//           <div><strong>Period:</strong> {currentPeriod.periodNumber}</div>
+//           <div><strong>Faculty:</strong> {currentPeriod.faculty}</div>
+//           <div><strong>Time:</strong> {currentPeriod.startTime} - {currentPeriod.endTime}</div>
+//           <div><strong>Subject:</strong> {currentPeriod.subject}</div>
+//         </>
+//       )
+//     };
+//   }
+  
+
+//   return { status: "Free Period" };
+
+//   }catch(e){
+//     console.error(e.message)
+//   }finally{
+//     // setLoading(false);
+//   }
+// };
+
 
 const getCurrentPeriod = (timetable, testHour = null, testMin = null) => {
   try{
+    // setLoading(true);
     if (!timetable || !Array.isArray(timetable)) {
     return { status: "Invalid timetable" }; 
   }
+  // console.log("thursday")
   const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
   const now = new Date();
 
@@ -225,9 +317,12 @@ const getCurrentPeriod = (timetable, testHour = null, testMin = null) => {
   const currentHour = now.getHours();
   const currentMin = now.getMinutes();
   const currentTime = currentHour * 60 + currentMin;
-  if (currentTime > 16 * 60 + 20) return { status: "No Classes" };
+
+  if (currentTime > 16 * 60 + 10) return { status: "No Classes" };
+
   const todayData = timetable.find(day => day.dayName === today);
   if (!todayData || !todayData.periods?.length) return { status: "No Classes" };
+
   const parseTime = (timeStr) => {
   const [time, modifier] = timeStr.trim().split(" ");
   let [hours, minutes] = time.split(":").map(Number);
@@ -258,8 +353,6 @@ const getCurrentPeriod = (timetable, testHour = null, testMin = null) => {
       )
     };
   }
-  
-
   return { status: "Free Period" };
 
   }catch(e){
@@ -270,40 +363,41 @@ const getCurrentPeriod = (timetable, testHour = null, testMin = null) => {
 };
 
   const handleUpload = async (room) => {
-    console.log("name");
+    // console.log("name");
     if (!selectedFile || !room) {
-      alert("Please provide class name and upload a file.");
+      toast.warn("Please provide class name and upload a file.");
       return;
     }
     
     const formData = new FormData();
     formData.append('file', selectedFile);
     formData.append('className', room);
+    formData.append('blockName', blockname);
 
     try {
-      const res = await fetch('http://localhost:5000/periods/upload', {
-        method: 'POST',
-        body: formData,
+      const res = await axios.post('http://localhost:5000/periods/upload', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
       });
 
-      const data = await res.json();
+      const data = await res.data;
 
-      fetchTimetables();
+      fetchTimetables();//update the timetables after uploading new timetable...
 
       alert(data.message);
 
     } catch (err) {
-      console.error(err);
+      console.error(err.response?.data || err.message);
       alert("Upload failed!");
     }
   };
+  
 
   const deleteTimetableByClass = async (className) => {
   const confirmed = window.confirm(`Are you sure you want to delete the timetable for ${className}?`);
   if (!confirmed) return;
 
   try {
-    await axios.delete(`http://localhost:5000/periods/class/${className}`);
+    await axios.patch(`http://localhost:5000/periods/delete/${blockname}/${className}`);
     alert("Timetable deleted successfully!");
     fetchTimetables()
   } catch (err) {
@@ -368,8 +462,7 @@ const getCurrentPeriod = (timetable, testHour = null, testMin = null) => {
   const displayRoom = (floor) => {
     sessionStorage.setItem("selectedFloor", JSON.stringify(floor));
     setRoomData(floor.rooms);
-    setFloorid(floor);
-    
+    setFloorid(floor);    
   };
 
   const backToFloors = () => {
@@ -427,6 +520,9 @@ const getCurrentPeriod = (timetable, testHour = null, testMin = null) => {
       </Card>
 
       <Row className="justify-content-end mb-3">
+        <Col xs="auto">
+          <Button variant="success" onClick={()=>{navigate(`/${blockname}/showtimetable`)}} size="lg">show Timetable</Button>
+        </Col>
         <Col xs="auto">
           <Button variant="danger" onClick={backtohome} size="lg">Back to Home</Button>
         </Col>
@@ -511,112 +607,118 @@ const getCurrentPeriod = (timetable, testHour = null, testMin = null) => {
                   </Col>
                 </Row>
 
-                
-                  {roomdata.length > 0 ? (
-  <Row xs={1} sm={2} md={3} lg={4} className="g-4">
-    {roomdata
-      .filter(room =>
-        (filterStatus === "all" ||
-          (filterStatus === "occupied" && room.occupied) ||
-          (filterStatus === "empty" && !room.occupied)) &&
-        (filterRoomType === "all" || room.room_type.toLowerCase().replace(/\s+/g, '') === filterRoomType.replace(/\s+/g, '')) &&
-        room.room_name.toLowerCase().includes(roomSearch.toLowerCase())
-      )
-      .map((room, index) => {
-        const timetable = timetables[room.room_name];
-        const now = new Date();
-        let hour = now.getHours();
-        const minute = now.getMinutes();
-        hour = hour % 12;
-        hour = hour ? hour : 12;
-        const periodinfo = getCurrentPeriod(timetable, hour, minute);
+        
+        {roomdata.length > 0 ? (
+          
+        <Row xs={1} sm={2} md={3} lg={4} className="g-4">
+          
+          {roomdata
+            .filter(room =>
+              (filterStatus === "all" ||
+                (filterStatus === "occupied" && room.occupied) ||
+                (filterStatus === "empty" && !room.occupied)) &&
+              (filterRoomType === "all" || room.room_type.toLowerCase().replace(/\s+/g, '') === filterRoomType.replace(/\s+/g, '')) &&
+              room.room_name.toLowerCase().includes(roomSearch.toLowerCase())
+            )
+            .map((room, index) => {
+              const timetable = timetableMap[room.room_name] ?? null;
+              let periodinfo = null;
+              if(timetable) //  runs only when a timetable exists
+              {
+                const now = new Date();
+                let hour = now.getHours();
+                const minute = now.getMinutes();
+                // hour = hour % 12;
+                // hour = hour ? hour : 12;
+                periodinfo = getCurrentPeriod(timetable, hour, minute);
+              }
 
-        const cardColor = room.occupied ? "#f8d7da" : "#d4edda"; 
+              const cardColor = room.occupied ? "#f8d7da" : "#d4edda"; 
 
-        return (
-          <Col key={index}>
-            <Card
-              className="h-100 shadow-sm border-0"
-              style={{ backgroundColor: cardColor, fontSize: "0.85rem", padding: "0.5rem", minHeight: "280px" }}
-            >
-              <Card.Body className="d-flex flex-column justify-content-between">
-                <div>
-                  <Card.Title className="fw-bold text-center text-dark mb-3">{room.room_name}</Card.Title>
+              return (
+                <Col key={index}>
+                  <Card
+                    className="h-100 shadow-sm border-0"
+                    style={{ backgroundColor: cardColor, fontSize: "0.85rem", padding: "0.5rem", minHeight: "280px" }}
+                  >
+                    <Card.Body className="d-flex flex-column justify-content-between">
+                      <div>
+                        <Card.Title className="fw-bold text-center text-dark mb-3">{room.room_name}</Card.Title>
 
-                  {timetable ? (
-                    <>
-                      {periodinfo.status === "Ongoing" ? (
-                        <Card.Text className="text-success text-center fw-semibold">{periodinfo.info}</Card.Text>
-                      ) : (
-                        <Card.Text className="text-muted text-center">{periodinfo.status}</Card.Text>
+                        {timetable ? (
+                          <>
+                            {periodinfo.status === "Ongoing" ? (
+                              <Card.Text className="text-success text-center fw-semibold">{periodinfo.info}</Card.Text>
+                            ) : (
+                              <Card.Text className="text-muted text-center">{periodinfo.status}</Card.Text>
+                            )}
+                          </>
+                        ) : (
+                          <>
+                            <Card.Text><strong>ID:</strong> {room.room_id}</Card.Text>
+                            <Card.Text><strong>Type:</strong> {room.room_type}</Card.Text>
+                            <Card.Text><strong>Capacity:</strong> {room.room_capacity}</Card.Text>
+                            <Card.Text><strong>Status:</strong> {room.occupied ? "Occupied" : "Empty"}</Card.Text>
+                            <Card.Text>
+                              <strong>Last Modified:</strong>{" "}
+                              {formatDistanceToNow(new Date(room.lastModifiedDate), { addSuffix: true })}
+                            </Card.Text>
+                          </>
+                        )}
+                      </div>
+
+                      {canEdit && (
+                        <div className="mt-2">
+                          {!timetable && (
+                            <>
+                              <input type="file" onChange={handleFileUpload} className="form-control mb-2" />
+                              <Button
+                                size="sm"
+                                variant="success"
+                                onClick={() => handleUpload(room.room_name)}
+                                className="mb-2 w-100"
+                              >
+                                Upload
+                              </Button>
+                            </>
+                          )}
+
+                          <Card.Footer className="d-flex justify-content-between p-1 bg-transparent border-0">
+                            {!timetable ? (
+                              <>
+                                <Button size="sm" variant="info" onClick={() => modifyRoom(room)}>
+                                  Modify
+                                </Button>
+                                <Button size="sm" variant="danger" onClick={() => confirmDeleteRoom(room)}>
+                                  Delete
+                                </Button>
+                              </>
+                            ) : (
+                              <>
+                                <Button size="sm" variant="danger" onClick={() => deleteTimetableByClass(room.room_name)}>
+                                  Remove Timetable
+                                </Button>
+                                <Button size="sm" variant="danger" onClick={() => confirmDeleteRoom(room)}>
+                                  Delete Room
+                                </Button>
+                              </>
+                            )}
+                          </Card.Footer>
+                        </div>
                       )}
-                    </>
-                  ) : (
-                    <>
-                      <Card.Text><strong>ID:</strong> {room.room_id}</Card.Text>
-                      <Card.Text><strong>Type:</strong> {room.room_type}</Card.Text>
-                      <Card.Text><strong>Capacity:</strong> {room.room_capacity}</Card.Text>
-                      <Card.Text><strong>Status:</strong> {room.occupied ? "Occupied" : "Empty"}</Card.Text>
-                      <Card.Text>
-                        <strong>Last Modified:</strong>{" "}
-                        {formatDistanceToNow(new Date(room.lastModifiedDate), { addSuffix: true })}
-                      </Card.Text>
-                    </>
-                  )}
-                </div>
-
-                {canEdit && (
-                  <div className="mt-2">
-                    {!timetable && (
-                      <>
-                        <input type="file" onChange={handleFileUpload} className="form-control mb-2" />
-                        <Button
-                          size="sm"
-                          variant="success"
-                          onClick={() => handleUpload(room.room_name)}
-                          className="mb-2 w-100"
-                        >
-                          Upload
-                        </Button>
-                      </>
-                    )}
-
-                    <Card.Footer className="d-flex justify-content-between p-1 bg-transparent border-0">
-                      {!timetable ? (
-                        <>
-                          <Button size="sm" variant="info" onClick={() => modifyRoom(room)}>
-                            Modify
-                          </Button>
-                          <Button size="sm" variant="danger" onClick={() => confirmDeleteRoom(room)}>
-                            Delete
-                          </Button>
-                        </>
-                      ) : (
-                        <>
-                          <Button size="sm" variant="danger" onClick={() => deleteTimetableByClass(room.room_name)}>
-                            Remove Timetable
-                          </Button>
-                          <Button size="sm" variant="danger" onClick={() => confirmDeleteRoom(room)}>
-                            Delete Room
-                          </Button>
-                        </>
-                      )}
-                    </Card.Footer>
-                  </div>
-                )}
-              </Card.Body>
-            </Card>
-          </Col>
-        );
-      })}
-  </Row>
-) : (
-  <p className="text-center mt-4">No rooms found.</p>
-)}
-              </>
-         
+                    </Card.Body>
+                  </Card>
+                </Col>
+              );
+            })}
+        </Row>
+        ) : (
+          <p className="text-center mt-4">No rooms found.</p>
       )}
-    </Container>
+      </>
+          
+        )}
+  </Container>
   );
 };
 
