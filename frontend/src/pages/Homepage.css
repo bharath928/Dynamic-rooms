@@ -49,15 +49,15 @@ h1 {
 }
 
 /* Card container for grid layout */
-.card-container {
+/* .card-container {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 20px;
   padding: 20px 0;
-}
+} */
 
 /* Card styling */
-.card {
+/* .card {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -67,15 +67,15 @@ h1 {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   overflow: hidden;
   transition: transform 0.2s ease-in-out;
-}
+} */
 
-.card:hover {
+/* .card:hover {
   transform: translateY(-5px);
   box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
-}
+} */
 
 /* Card content */
-.card-content {
+/* .card-content {
   padding: 15px;
   cursor: pointer;
 }
@@ -89,10 +89,10 @@ h1 {
   margin: 5px 0;
   color: #555;
   font-size: 14px;
-}
+} */
 
 /* Image placeholder */
-.img {
+/* .img {
   height: 150px;
   background-color: #ddd;
   display: flex;
@@ -100,17 +100,17 @@ h1 {
   justify-content: center;
   font-size: 18px;
   color: #777;
-}
+} */
 
 /* Delete button */
-.card-button {
+/* .card-button {
   padding: 10px 15px;
   text-align: right;
   background-color: #fff;
   border-top: 1px solid #ddd;
-}
+} */
 
-.card-button input[type="button"] {
+/* .card-button input[type="button"] {
   padding: 8px 16px;
   background-color: #f44336;
   color: white;
@@ -118,11 +118,11 @@ h1 {
   border-radius: 5px;
   cursor: pointer;
   font-size: 14px;
-}
+} */
 
-.card-button input[type="button"]:hover {
+/* .card-button input[type="button"]:hover {
   background-color: #d32f2f;
-}
+} */
 
 /* Loading spinner */
 .loading-con {
@@ -286,3 +286,30 @@ h1 {
   color: red;
 }
  */
+.block-card {
+  background: linear-gradient(135deg, #e0f7fa, #f0f4ff); 
+  
+  border: 1px solid #222425;
+  border-radius: 20px;
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+  height: 100%;
+}
+
+.block-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+.block-card .img {
+  background: #ffffff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.block-card h5 {
+  color: #003366;
+  font-size: 1.1rem;
+}
+
+.block-card p {
+  margin: 0;
+}

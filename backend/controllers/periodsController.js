@@ -71,7 +71,7 @@ const uploadTimetableFromExcel = async (req, res) => {
 
     const workbook = xlsx.read(file.buffer, { type: 'buffer' });
     const sheet = workbook.Sheets[workbook.SheetNames[0]];
-    const sheetData = xlsx.utils.sheet_to_json(sheet, { defval: '' });
+    const sheetData = xlsx.utils.sheet_to_json(sheet, { defval: "-" });
 
     if (!sheetData || sheetData.length === 0) {
       return res.status(400).json({ message: 'Excel sheet is empty or improperly formatted.' });

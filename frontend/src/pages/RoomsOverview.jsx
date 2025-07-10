@@ -35,12 +35,12 @@ const RoomsOverview = () => {
     };
 
     return (
-        <div className="container mt-4">
+        <div className="container py-4">
   {/* Header Row with Back Button */}
-  <div className="d-flex justify-content-between align-items-center mb-3">
-    <h3 className="mb-0 text-center flex-grow-1">Rooms Overview</h3>
+  <div className="position-relative text-center mb-4">
+    <h3 className="fw-bold text-primary">Rooms Overview</h3>
     <button
-      className="btn btn-outline-secondary btn-sm ms-auto"
+      className="btn btn-outline-primary btn-sm position-absolute top-0 end-0"
       onClick={() => window.history.back()}
     >
       <i className="bi bi-arrow-left"></i> Back
@@ -48,10 +48,10 @@ const RoomsOverview = () => {
   </div>
 
   {/* Filters */}
-  <div className="row mb-3">
-    <div className="col-md-6">
+  <div className="row justify-content-center mb-4">
+    <div className="col-md-4 mb-2">
       <select
-        className="form-select form-select-sm w-75 mx-auto"
+        className="form-select shadow-sm rounded-pill"
         onChange={(e) => setBranch(e.target.value)}
       >
         <option value="">Select Branch</option>
@@ -62,9 +62,9 @@ const RoomsOverview = () => {
         ))}
       </select>
     </div>
-    <div className="col-md-6">
+    <div className="col-md-4 mb-2">
       <select
-        className="form-select form-select-sm w-75 mx-auto"
+        className="form-select shadow-sm rounded-pill"
         onChange={(e) => setStatus(e.target.value)}
       >
         <option value="0">All</option>
@@ -77,41 +77,37 @@ const RoomsOverview = () => {
   {/* Room Cards */}
   <div className="row">
     {rooms.map((room, index) => (
-      <div key={index} className="col-lg-3 col-md-4 col-sm-6 mb-3">
+      <div key={index} className="col-lg-3 col-md-4 col-sm-6 mb-4">
         <div
-          className="card shadow-sm"
-          style={{ fontSize: "0.9rem", padding: "10px" }}
+          className="card h-100 border-0 shadow rounded-4"
+          style={{
+            backgroundColor: room.occupied ? "#ffe5e5" : "#e6fff5",
+            fontSize: "0.9rem",
+          }}
         >
-          <div className="card-body p-3">
-            <p className="card-text">
+          <div className="card-body">
+            <p className="text-muted small mb-2">
               Last Modified:{" "}
               {formatDistanceToNow(new Date(room.lastModifiedDate), {
                 addSuffix: true,
               })}
             </p>
-            <h6 className="card-title mb-1">{room.room_name}</h6>
-            <p className="card-text mb-1">
-              <strong>ID:</strong> {room.room_id}
-            </p>
-            <p className="card-text mb-1">
-              <strong>Type:</strong> {room.room_type}
-            </p>
-            <p className="card-text mb-1">
-              <strong>Capacity:</strong> {room.room_capacity}
-            </p>
-            <p
-              className={`badge ${
-                room.occupied ? "bg-danger" : "bg-success"
-              }`}
-            >
-              {room.occupied ? "Occupied" : "Empty"}
-            </p>
+            <h6 className="card-title text-dark fw-semibold mb-2">{room.room_name}</h6>
+            <p className="mb-1"><strong>ID:</strong> {room.room_id}</p>
+            <p className="mb-1"><strong>Type:</strong> {room.room_type}</p>
+            <p className="mb-1"><strong>Capacity:</strong> {room.room_capacity}</p>
+             <span
+      className={`badge px-3 py-2 ${room.occupied ? "bg-danger" : "bg-success"}`}
+    >
+      {room.occupied ? "Occupied" : "Empty"}
+    </span>
           </div>
         </div>
       </div>
     ))}
   </div>
 </div>
+
 
     );
 };

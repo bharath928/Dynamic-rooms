@@ -1,6 +1,6 @@
-.login-page-wrapper {
+/* .login-page-wrapper {
   position: relative;
-  background-image: url('./AITAM.jpg');
+  background-image: url('./AITAM.webp');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -24,4 +24,47 @@
 .login-page-wrapper > div {
   position: relative;
   z-index: 2; 
+}
+ */
+
+
+ /* Marquee banner */
+.top-marquee {
+  background: linear-gradient(to right, #0066cc, #003366);
+  font-weight: 500;
+  font-size: 1rem;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 999;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Main login page wrapper */
+.login-page-wrapper {
+  position: relative;
+  background-image: url('./AITAM.webp');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 5rem 1rem 1rem; /* Added top padding for marquee space */
+  overflow: hidden;
+}
+
+.login-page-wrapper::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  backdrop-filter: blur(5px); 
+  background-color: rgba(255, 255, 255, 0.2); 
+  z-index: 1;
+}
+
+.login-page-wrapper > div {
+  position: relative;
+  z-index: 2;
 }

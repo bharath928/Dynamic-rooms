@@ -79,56 +79,62 @@ const FindFaculty = () => {
   };
 
   return (
-    <div style={{ padding: '20px' }}>
-      <h1>Find Faculty's Current Class</h1>
+    <div className="container py-5">
+  <div className="position-absolute top-0 end-0 mt-3 me-3">
+    <button
+      className="btn btn-outline-secondary btn-sm"
+      onClick={() => window.history.back()}
+    >
+      ← Back
+    </button>
+    
+  </div>
+  <h1 className="text-primary fw-bold text-center flex-grow-1 m-0">Find Faculty's Current Class</h1>
+  <br />
 
-      <input
-        type="text"
-        placeholder="Search by faculty name..."
-        value={searchQuery}
-        onChange={handleSearchChange}
-        style={{
-          padding: '10px',
-          width: '300px',
-          marginBottom: '20px',
-          borderRadius: '5px',
-          border: '1px solid #ccc',
-        }}
-      />
 
-      {loading ? (
-        <div style={{ fontSize: '18px' }}>🔄 Loading current classes...</div>
-      ) : (
-        <>
-          {searchQuery && filteredClasses.length === 0 ? (
-            <p>No ongoing class found for "{searchQuery}"</p>
-          ) : (
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px' }}>
-              {filteredClasses.map((cls, index) => (
-                <div
-                  key={index}
-                  style={{
-                    border: '1px solid #ccc',
-                    padding: '15px',
-                    borderRadius: '8px',
-                    width: '280px',
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-                    background: '#f9f9f9',
-                  }}
-                >
-                  <p><strong>Faculty:</strong> {cls.faculty}</p>
-                  <p><strong>Block:</strong> {cls.block}</p>
-                  <p><strong>Room:</strong> {cls.room}</p>
-                  
-                  <p><strong>Subject:</strong> {cls.subject}</p>
-                  <p><strong>Time:</strong> {cls.time}</p>
-                </div>
-              ))}
-            </div>
-          )}
-        </>
-      )}
+  <div className="d-flex justify-content-center mb-4">
+    <input
+      type="text"
+      placeholder="Search by faculty name..."
+      value={searchQuery}
+      onChange={handleSearchChange}
+      className="form-control w-100"
+      style={{ maxWidth: "400px", borderRadius: "0.5rem", padding: "0.75rem" }}
+    />
+  </div>
+
+  {loading ? (
+    <div className="text-center fs-5 text-secondary">
+      🔄 Loading current classes...
     </div>
+  ) : (
+    <>
+      {searchQuery && filteredClasses.length === 0 ? (
+        <p className="text-center text-danger">
+          No ongoing class found for "<strong>{searchQuery}</strong>"
+        </p>
+      ) : (
+        <div className="row g-4 justify-content-center">
+          {filteredClasses.map((cls, index) => (
+            <div key={index} className="col-md-4 col-sm-6">
+              <div className="card shadow-sm border-start border-primary border-4 h-100">
+                <div className="card-body">
+                  <p className="mb-2"><strong>Faculty:</strong> {cls.faculty}</p>
+                  <p className="mb-2"><strong>Block:</strong> {cls.block}</p>
+                  <p className="mb-2"><strong>Room:</strong> {cls.room}</p>
+                  <p className="mb-2"><strong>Subject:</strong> {cls.subject}</p>
+                  <p className="mb-0"><strong>Time:</strong> {cls.time}</p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </>
+  )}
+</div>
+
   );
 };
 

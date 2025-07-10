@@ -39,50 +39,64 @@ const AdminDashboard = () => {
 
   return (
     <Container className="py-5">
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <h2 className="fw-bold text-primary">Admin Dashboard</h2>
-        <Button variant="outline-secondary" onClick={() => navigate("/")}>← Back to Home</Button>
-      </div>
+  {/* Header */}
+  <div className="d-flex justify-content-between align-items-center mb-4">
+    <h2 className="fw-bold text-primary">Admin Dashboard</h2>
+    <Button variant="outline-primary" onClick={() => navigate("/")}>
+      ← Back to Home
+    </Button>
+  </div>
 
-      {loading ? (
-        <div className="d-flex justify-content-center mt-5">
-          <Spinner animation="border" variant="primary" />
-        </div>
-      ) : error ? (
-        <Alert variant="danger">{error}</Alert>
-      ) : admins.length === 0 ? (
-        <Alert variant="info">No admins found.</Alert>
-      ) : (
-        <div className="p-3 rounded shadow bg-light">
-          <Row className="fw-bold bg-primary text-white py-2 rounded mb-2 text-center">
-            <Col xs={4} className="fs-5">Admin ID</Col>
-            <Col xs={4} className="fs-5">Department</Col>
-            <Col xs={4} className="fs-5">Actions</Col>
-          </Row>
+  {/* Loading / Error / No Admins */}
+  {loading ? (
+    <div className="d-flex justify-content-center mt-5">
+      <Spinner animation="border" variant="primary" />
+    </div>
+  ) : error ? (
+    <Alert variant="danger">{error}</Alert>
+  ) : admins.length === 0 ? (
+    <Alert variant="info">No admins found.</Alert>
+  ) : (
+    // Admin List Card
+    <div className="p-4 rounded-4 shadow-sm bg-white">
+      {/* Header Row */}
+      <Row className="fw-semibold bg-primary text-white py-3 rounded-3 mb-3 text-center">
+        <Col xs={4} className="fs-6">Admin ID</Col>
+        <Col xs={4} className="fs-6">Department</Col>
+        <Col xs={4} className="fs-6">Actions</Col>
+      </Row>
 
-          {admins.map((admin, index) => (
-            <Row
-              key={admin._id}
-              className={`align-items-center py-3 px-2 text-center ${index % 2 === 0 ? 'bg-white' : 'bg-light'}`}
-              style={{ borderBottom: "1px solid #dee2e6" }}
+      {/* Admin Rows */}
+      {admins.map((admin, index) => (
+        <Row
+          key={admin._id}
+          className={`align-items-center text-center py-3 px-2 rounded-3 mb-2 ${
+            index % 2 === 0 ? "bg-light" : "bg-body"
+          }`}
+          style={{
+            border: "1px solid #dee2e6",
+            boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
+          }}
+        >
+          <Col xs={4} className="text-dark">{admin.userId}</Col>
+          <Col xs={4} className="text-muted">{admin.dept}</Col>
+          <Col xs={4}>
+            <Button
+              variant="outline-danger"
+              size="sm"
+              className="px-3"
+              onClick={() => deleteAdmin(admin._id)}
             >
-              <Col xs={4}>{admin.userId}</Col>
-              <Col xs={4}>{admin.dept}</Col>
-              <Col xs={4}>
-              <Button
-                variant="outline-danger"
-                size="sm"
-                onClick={() => deleteAdmin(admin._id)}
-              >
-                <FaTrash className="me-1" />
-                Delete
-              </Button>
-              </Col>
-            </Row>
-          ))}
-        </div>
-      )}
-    </Container>
+              <FaTrash className="me-2" />
+              Delete
+            </Button>
+          </Col>
+        </Row>
+      ))}
+    </div>
+  )}
+</Container>
+
   );
 };
 

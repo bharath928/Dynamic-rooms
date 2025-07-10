@@ -174,62 +174,92 @@ const Homepage = ({footerHeight}) => {
   };
 
   return (
-    <>
-      {/* Header/Navbar - Fixed */}
-      <div style={{
-        backgroundColor: '#1a237e',
-        padding: '10px 0',
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        width: '100%',
-        zIndex: 1000
-      }}>
-        <div className="container-fluid d-flex align-items-center justify-content-between flex-wrap">
-          <div style={{
-            display: 'flex',
-            width: '100%',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            flexWrap: 'wrap'
-          }}>
-            {/* Left: Logo */}
-            <div style={{ flex: '0 1 auto' }}>
-              <img
-                src="logo2.jpg"
-                alt="Logo"
-                style={{
-                  height: '60px',
-                  width: 'auto',
-                  marginLeft: '10px',
-                  borderRadius: '10px'
-                }}
-              />
-            </div>
+  <>
+    {/* Fixed Header */}
+    <div style={{
+      background: 'linear-gradient(90deg,#0066cc,#003366)',
+      padding: '12px 0',
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      width: '100%',
+      zIndex: 1000,
+      boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)'
+    }}>
+      <div className="container-fluid">
+        <div className="d-flex align-items-center justify-content-between flex-wrap w-100">
 
-            {/* Center: Title */}
-            <h3 className="m-0 text-center text-white flex-grow-1" style={{ fontSize: 'clamp(1.2rem, 2vw, 2rem)' }}>
-              Dynamic Rooms
-            </h3>
+          {/* Logo */}
+          <div>
+            <img
+              src="logo2.webp"
+              alt="Logo"
+              style={{
+                height: '55px',
+                width: 'auto',
+                marginLeft: '10px',
+                borderRadius: '10px',
+                boxShadow: '0 1px 6px rgba(255,255,255,0.1)'
+              }}
+            />
+          </div>
 
-            {/* Right: Search Bar */}
-            <div className="d-flex align-items-center my-2 my-md-0" style={{ flex: '0 1 auto', marginRight: '1cm', width: '100%', maxWidth: '250px' }}>
-              <input
-                type="search"
-                className="form-control me-2"
-                placeholder="Search..."
-                onChange={(e) => handleSearch(e)}
-                style={{ backgroundColor: '#eee', width: '100%' }}
-              />
-            </div>
+          {/* Title */}
+          <h3 className="m-0 text-white text-center flex-grow-1"
+            style={{
+              fontSize: 'clamp(1.4rem, 2vw, 2rem)',
+              fontWeight: '600',
+              letterSpacing: '0.5px',
+              textShadow: '0 1px 3px rgba(0,0,0,0.3)'
+            }}
+          >
+            AITAM Digital Room Management Portal
+          </h3>
 
-            {/* Hamburger Menu */}
-            <div className="position-relative" ref={menuRef}>
-              <button className="btn btn-outline-light" onClick={() => setShowMenu(!showMenu)}>
-                ☰
-              </button>
-              {showMenu && (
-                <ul className="dropdown-menu show position-absolute end-0 mt-2">
+          {/* Right Controls (Search + Hamburger) */}
+          <div className="d-flex align-items-center justify-content-between w-100 mt-2 mt-md-0 flex-wrap"
+     style={{ maxWidth: '100%', gap: '10px' }}
+>
+  {/* Search */}
+  <div style={{ flex: '1' }}>
+    <input
+      type="search"
+      className="form-control"
+      placeholder="Search Rooms..!"
+      onChange={(e) => handleSearch(e)}
+      style={{
+        backgroundColor: '#f0f0f0',
+        border: '1px solid #ccc',
+        borderRadius: '6px',
+        fontSize: '0.95rem',
+        width: '100%'
+      }}
+    />
+  </div>
+
+  {/* Hamburger */}
+  <div className="position-relative" ref={menuRef} style={{ marginLeft: 'auto' }}>
+    <button className="btn btn-outline-light"
+      onClick={() => setShowMenu(!showMenu)}
+      style={{
+        borderRadius: '6px',
+        padding: '6px 12px',
+        fontWeight: 'bold',
+        backgroundColor: '#0056b3',
+        color: 'white',
+        border: 'none'
+      }}
+    >
+      ☰
+    </button>
+    {showMenu && (
+                <ul className="dropdown-menu show position-absolute end-0 mt-2"
+                  style={{
+                    minWidth: '180px',
+                    borderRadius: '10px',
+                    boxShadow: '0 4px 16px rgba(0,0,0,0.15)'
+                  }}
+                >
                   {access === 'super_admin' && (
                     <li><button className="dropdown-item text-primary" onClick={() => navigate('/aitam')}>Add Block</button></li>
                   )}
@@ -240,81 +270,114 @@ const Homepage = ({footerHeight}) => {
                     <li><button className="dropdown-item text-primary" onClick={dashboardHandler}>Dashboard</button></li>
                   )}
                   <li><button className="dropdown-item text-warning" onClick={roomsOverview}>Rooms Overview</button></li>
-                  <li><button className="dropdown-item text-success" onClick={()=>{navigate('/findFaculty')}}>Find Faculty</button></li>
+                  <li><button className="dropdown-item text-success" onClick={() => navigate('/findFaculty')}>Find Faculty</button></li>
                   <li><button className="dropdown-item text-danger" onClick={handleSignOut}>Sign Out</button></li>
                 </ul>
               )}
-            </div>
-          </div>
+  </div>
+</div>
+
         </div>
       </div>
+    </div>
 
-      {/* Push Content Down */}
-      <div style={{ marginTop: '130px' }}>
-        {/* Search Results */}
+
+    {/* Main Content with Padding */}
+    <div style={{ paddingTop: '150px', paddingInline: '12px' }}>
+      {/* Search Results */}
         {searchTerm !== '' && (
-          <div className="room-overlay" style={{
-            position: 'fixed',
-            top: '130px',
-            left: 0,
-            width: '100vw',
-            height: 'calc(100vh - 130px)',
-            backgroundColor: 'rgba(255, 255, 255, 0.95)',
-            zIndex: 999,
-            overflowY: 'auto',
-            padding: '20px',
-            paddingBottom:`${footerHeight}px`,
-            display: 'flex',
-            flexWrap: 'wrap',
-            justifyContent: 'center',
-            alignItems: 'flex-start'
-          }}>
-            {filteredRooms.length ? (
-              filteredRooms.map((room, index) => (
-                <div className="room-card card p-2 shadow-sm m-2 d-flex flex-column align-items-center"
-                  key={index}
-                  style={{ width: '100%', maxWidth: '220px', flex: '1 1 auto' }}>
-                  <h5 className="text-primary">{room.block_name.toUpperCase()}</h5>
-                  <h6>{room.room_name.toUpperCase()}</h6>
-                  <p className="small">Type: {room.room_type}</p>
-                  <p className="small">Capacity: {room.room_capacity}</p>
-                  <p className={room.occupied ? 'text-danger fw-bold' : 'text-success fw-bold'}>
-                    {room.occupied ? 'Occupied' : 'Available'}
-                  </p>
-                </div>
-              ))
-            ) : (
-              <h3 className="text-center text-muted">NO Matching Rooms...</h3>
-            )}
-          </div>
-        )}
-      </div>
+    <div
+      className="room-overlay"
+      style={{
+        position: 'fixed',
+        top: '130px',
+        left: 0,
+        width: '100vw',
+        height: 'calc(100vh - 130px)',
+        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+        zIndex: 999,
+        overflowY: 'auto',
+        paddingTop: '50px',         // ⬅ Top padding for header space
+    paddingBottom: '100px', 
+        // paddingBottom: `${footerHeight}px`,
+        display: 'flex',
+        flexWrap: 'wrap',
+        justifyContent: 'center',
+        alignItems: 'flex-start',
+      }}
+    >
+      {filteredRooms.length ? (
+        filteredRooms.map((room, index) => {
+          // Guard clause to skip invalid room data
+          if (!room || !room.block_name || !room.room_name) return null;
 
-      {/* Main Block List */}
+          return (
+            <div
+              className="room-card card p-2 shadow-sm m-2 d-flex flex-column align-items-center"
+              key={index}
+              style={{ width: '100%', maxWidth: '220px', flex: '1 1 auto' }}
+            >
+              <h5 className="text-primary">
+                {(room.block_name || '').toUpperCase()}
+              </h5>
+             <h6 style={{ textAlign: 'center' }}>
+                {(room.room_name || '').toUpperCase()}
+              </h6>
+              <p className="small">Type: {room.room_type || 'N/A'}</p>
+              <p className="small">Capacity: {room.room_capacity || 'N/A'}</p>
+              <p
+                className={
+                  room.occupied ? 'text-danger fw-bold' : 'text-success fw-bold'
+                }
+              >
+                {room.occupied ? 'Occupied' : 'Available'}
+              </p>
+            </div>
+          );
+        })
+      ) : (
+        <h3 className="text-center text-muted">NO Matching Rooms...</h3>
+      )}
+    </div>
+      )}
+
+      {/* Main Block Cards */}
       {!block.length ? (
         <h1 className="text-center text-muted mt-4">No data found...</h1>
       ) : (
-        <div className={`row g-2 ${searchTerm !== '' ? 'blur-content' : ''}`}>
+        <div className={`row g-2 ${searchTerm !== '' ? 'blur-content' : ''}`}
+          // style={{ marginTop: '28px' }}
+          style={{ paddingTop: '30px', paddingBottom: '30px' }}
+        >
           {block.map((e, index) => (
             <div key={index} className="col-12 col-md-6 col-lg-3">
               <div
-  className="card shadow-sm p-2"
-  style={{ border: "1px solid #003366" }} // Dark blue border
->
-                <div
-                  className="card-content text-center"
-                  onClick={() => navigate(`/aitam/${e.block_name}`)}
-                  style={{ cursor: 'pointer' }}
-                >
-                  <div className="img bg-light mb-1 rounded" style={{ height: '80px' }}></div>
-                  <h5 className="text-primary">{e.block_name.toUpperCase()}</h5>
+                className="card block-card shadow-sm p-3"
+                onClick={() => navigate(`/aitam/${e.block_name}`)}
+                style={{ cursor: 'pointer' }}
+              >
+                <div className="card-content text-center">
+                  <div className="img bg-light mb-3 rounded-circle d-flex align-items-center justify-content-center mx-auto" style={{ width: "80px", height: "80px" }}>
+                    <i className="bi bi-building fs-3 text-secondary"></i>
+                  </div>
+                  <h5 className="text-uppercase text-dark fw-bold mb-1">{e.block_name}</h5>
                   <p className="small text-muted">No of Floors: {e.floors.length}</p>
                 </div>
 
                 {(access === 'super_admin' || e.block_name.toLowerCase() === dept) && (
-                  <div className="d-flex justify-content-between card-button">
-                    <button className="btn btn-primary btn-sm" onClick={() => modifyBlock(e)}>Modify</button>
-                    <button className="btn btn-danger btn-sm" onClick={() => deleteBlock(e)}>Delete</button>
+                  <div className="d-flex justify-content-between mt-3">
+                    <button
+                      className="btn btn-outline-primary btn-sm w-100 me-2"
+                      onClick={(ev) => { ev.stopPropagation(); modifyBlock(e); }}
+                    >
+                      Modify
+                    </button>
+                    <button
+                      className="btn btn-outline-danger btn-sm w-100"
+                      onClick={(ev) => { ev.stopPropagation(); deleteBlock(e); }}
+                    >
+                      Delete
+                    </button>
                   </div>
                 )}
               </div>
@@ -322,7 +385,9 @@ const Homepage = ({footerHeight}) => {
           ))}
         </div>
       )}
-    </>
-  );
+    </div>
+  </>
+);
+
 }
 export default Homepage;
