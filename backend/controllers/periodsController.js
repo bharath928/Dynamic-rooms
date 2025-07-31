@@ -71,7 +71,7 @@ const uploadTimetableFromExcel = async (req, res) => {
 
     const workbook = xlsx.read(file.buffer, { type: 'buffer' });
     const sheet = workbook.Sheets[workbook.SheetNames[0]];
-    const sheetData = xlsx.utils.sheet_to_json(sheet, { defval: "-" });
+    const sheetData = xlsx.utils.sheet_to_json(sheet, { defval: '-' });
 
     if (!sheetData || sheetData.length === 0) {
       return res.status(400).json({ message: 'Excel sheet is empty or improperly formatted.' });
@@ -113,7 +113,7 @@ const uploadTimetableFromExcel = async (req, res) => {
 
 const getTimetables = async (req, res) => {
   try {
-    const { blockName } = req.params;
+    const {blockName} = req.params;
     const response = await Timetable.findOne({ blockName });
 
     if (!response) {
@@ -159,4 +159,17 @@ const getAllTimetables = async (req, res) => {
   }
 };
 
-module.exports = { uploadTimetableFromExcel,getTimetables,deleteTimetable,getAllTimetables};
+const deleteblockTimetable = async(req,res)=>{
+  try{
+    const {blockName} = req.params
+    const response = await Timetable.deleteOne({blockName})
+    if(!res) 
+      return res.status(400).json({ message: 'check the user details..' });
+
+    return res.status(200).json(response);
+  }catch(err){
+    res.status(500).json({ message: err.message });
+  }
+}
+
+module.exports = { uploadTimetableFromExcel,getTimetables,deleteTimetable,getAllTimetables,deleteblockTimetable};

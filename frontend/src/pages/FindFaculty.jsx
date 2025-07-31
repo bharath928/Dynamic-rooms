@@ -26,7 +26,7 @@ const FindFaculty = () => {
   const fetchTimetables = async () => {
     setLoading(true);
     try {
-      const { data } = await axios.get(`http://localhost:5000/periods/fetchBlocksTimetables`);
+      const { data } = await axios.get(`https://dr-backend-32ec.onrender.com/periods/fetchBlocksTimetables`);
       const now = new Date();
       const currentDay = now.toLocaleDateString('en-US', { weekday: 'long' });
       const currentMinutes = now.getHours() * 60 + now.getMinutes();
@@ -79,61 +79,91 @@ const FindFaculty = () => {
   };
 
   return (
-    <div className="container py-5">
-  <div className="position-absolute top-0 end-0 mt-3 me-3">
-    <button
-      className="btn btn-outline-secondary btn-sm"
-      onClick={() => window.history.back()}
-    >
-      ← Back
-    </button>
-    
-  </div>
-  <h1 className="text-primary fw-bold text-center flex-grow-1 m-0">Find Faculty's Current Class</h1>
-  <br />
+   <>
+  {/* Slim, Responsive Navbar */}
+  <div
+    className="container-fluid px-0"
+    style={{
+      background: 'linear-gradient(90deg, #2c6dbbff 0%, #3177c2ff 100%)',
+      borderBottom: '3px solid #0d6efd',
+      padding: '0.75rem 0',
+      zIndex: 1050,
+    }}
+  >
+    <div className="container d-flex flex-column flex-md-row align-items-center justify-content-between gap-3 px-3">
+      {/* Title */}
+      <h5 className="text-white fw-bold m-0 text-center text-md-start flex-shrink-0">
+        📘 Find Faculty's Current Class
+      </h5>
 
+      {/* Search Input */}
+      <input
+        type="text"
+        placeholder="Search by faculty name..."
+        value={searchQuery}
+        onChange={handleSearchChange}
+        className="form-control shadow-sm"
+        style={{
+          maxWidth: '400px',
+          borderRadius: '0.5rem',
+          padding: '0.5rem 1rem',
+          border: 'none',
+        }}
+      />
 
-  <div className="d-flex justify-content-center mb-4">
-    <input
-      type="text"
-      placeholder="Search by faculty name..."
-      value={searchQuery}
-      onChange={handleSearchChange}
-      className="form-control w-100"
-      style={{ maxWidth: "400px", borderRadius: "0.5rem", padding: "0.75rem" }}
-    />
-  </div>
-
-  {loading ? (
-    <div className="text-center fs-5 text-secondary">
-      🔄 Loading current classes...
+      {/* Back Button */}
+      <button
+        className="btn btn-outline-light btn-sm fw-semibold"
+        onClick={() => window.history.back()}
+        style={{
+          whiteSpace: 'nowrap',
+          borderWidth: '2px',
+          padding: '0.4rem 0.75rem',
+          transition: '0.3s',
+        }}
+        onMouseEnter={(e) => (e.currentTarget.style.boxShadow = '0 0 8px #ffffff')}
+        onMouseLeave={(e) => (e.currentTarget.style.boxShadow = 'none')}
+      >
+        ⬅ Back
+      </button>
     </div>
-  ) : (
-    <>
-      {searchQuery && filteredClasses.length === 0 ? (
-        <p className="text-center text-danger">
-          No ongoing class found for "<strong>{searchQuery}</strong>"
-        </p>
-      ) : (
-        <div className="row g-4 justify-content-center">
-          {filteredClasses.map((cls, index) => (
-            <div key={index} className="col-md-4 col-sm-6">
-              <div className="card shadow-sm border-start border-primary border-4 h-100">
-                <div className="card-body">
-                  <p className="mb-2"><strong>Faculty:</strong> {cls.faculty}</p>
-                  <p className="mb-2"><strong>Block:</strong> {cls.block}</p>
-                  <p className="mb-2"><strong>Room:</strong> {cls.room}</p>
-                  <p className="mb-2"><strong>Subject:</strong> {cls.subject}</p>
-                  <p className="mb-0"><strong>Time:</strong> {cls.time}</p>
+  </div>
+
+  {/* Main Content Section */}
+  <div className="container py-4">
+    {loading ? (
+      <div className="text-center fs-5 text-secondary">
+        Loading current classes...
+      </div>
+    ) : (
+      <>
+        {searchQuery && filteredClasses.length === 0 ? (
+          <p className="text-center text-danger">
+            No ongoing class found for "<strong>{searchQuery}</strong>"
+          </p>
+        ) : (
+          <div className="row g-4 justify-content-center">
+            {filteredClasses.map((cls, index) => (
+              <div key={index} className="col-12 col-sm-6 col-md-4">
+                <div className="card shadow-sm border-start border-primary border-4 h-100">
+                  <div className="card-body">
+                    <p className="mb-2"><strong>Faculty:</strong> {cls.faculty}</p>
+                    <p className="mb-2"><strong>Block:</strong> {cls.block}</p>
+                    <p className="mb-2"><strong>Room:</strong> {cls.room}</p>
+                    <p className="mb-2"><strong>Subject:</strong> {cls.subject}</p>
+                    <p className="mb-0"><strong>Time:</strong> {cls.time}</p>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
-      )}
-    </>
-  )}
-</div>
+            ))}
+          </div>
+        )}
+      </>
+    )}
+  </div>
+</>
+
+
 
   );
 };

@@ -15,6 +15,7 @@ router.delete("/delete-data/:id",blockController.deleteBlock)
 //Floors Routes...
 router.post("/floor/:id",blockController.updateBlockDetailsbyId)
 router.delete("/:blockId/floor/:floorId",blockController.deleteFloor)
+router.get("/:blockname/floor/get-data/:floorId",blockController.getFloorDetails)
 
 //Room Routes..
 router.post("/floors/room/:blockid/:floorid",blockController.addroomDetails)

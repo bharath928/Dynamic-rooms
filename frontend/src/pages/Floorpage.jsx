@@ -6,7 +6,6 @@ import { jwtDecode } from "jwt-decode";
 import { formatDistanceToNow } from "date-fns";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-// import "./FloorPage.css";
 import { Modal, Button, Form, Card, Row, Col, Container } from "react-bootstrap";
 import * as XLSX from "xlsx";
 
@@ -19,9 +18,6 @@ const Loader = ({ text = "Loading...", centered = true }) => {
     </div>
   );
 };
-
-
-
 
 const Floorpage = () => {
   const navigate = useNavigate();
@@ -52,6 +48,7 @@ const Floorpage = () => {
   const [filterStatus, setFilterStatus] = useState("all");
   const [filterRoomType, setFilterRoomType] = useState("all");
   const [loading,setLoading] = useState(false)
+  const [uploadLoading,setuploadLoading] = useState(false)
   const [timetables, setTimetables] = useState([]);
    const [selectedFile, setSelectedFile] = useState(null);
   const [previewData, setPreviewData] = useState([]);
@@ -89,7 +86,7 @@ const toggleFlip = (index) => {
     const fetchBlockData = async () => {
       try {
         setLoading(true)
-        const response = await axios.get(`http://localhost:5000/block/get-data-name/${blockname}`);
+        const response = await axios.get(`https://dr-backend-32ec.onrender.com/block/get-data-name/${blockname}`);
         setBlock(response.data);
         localStorage.setItem("block", JSON.stringify(response.data));
       } catch (error) {
@@ -136,15 +133,16 @@ const toggleFlip = (index) => {
       const now = new Date();
       let hour = now.getHours();
       const minute = now.getMinutes();
-      hour = hour % 12;
-      hour = hour ? hour : 12;
+      // hour = hour % 12;
+      // hour = hour ? hour : 12;
       const periodinfo = getCurrentPeriod(timetable, hour, minute);
       // console.log(periodinfo)
+      const shouldBeOccupied = (periodinfo.status === "Ongoing" && periodinfo.faculty!="-");
      
-      const shouldBeOccupied = periodinfo.status === "Ongoing";
+      // const shouldBeOccupied = periodinfo.status === "Ongoing";
       if (room.occupied !== shouldBeOccupied) {
         try {
-          await fetch(`http://localhost:5000/block/floors/room/${block._id}/${floorid._id}/${room._id}`, {
+          await fetch(`https://dr-backend-32ec.onrender.com/block/floors/room/${block._id}/${floorid._id}/${room._id}`, {
             method: 'PUT',
             headers: {
               'Content-Type': 'application/json',
@@ -210,7 +208,7 @@ useEffect(() => {
 
 const fetchTimetables = async()=>{
   try{
-    const {data} = await axios.get(`http://localhost:5000/periods/blockTimetables/${blockname}`)
+    const {data} = await axios.get(`https://dr-backend-32ec.onrender.com/periods/blockTimetables/${blockname}`)
     // console.log(data)
     setTimetables(data)
   }catch(err){
@@ -270,7 +268,7 @@ const getCurrentPeriod = (timetable, testHour = null, testMin = null) => {
   const currentTime = currentHour * 60 + currentMin;
 
 
-  if (currentTime > 16 * 60 + 10) return { status: "No Classes" };
+  if (currentTime > (16 * 60 + 10) || currentTime < (9*60+15) ) return { status: "NoClass" };
 
 
   const todayData = timetable.find(day => day.dayName === today);
@@ -302,6 +300,7 @@ const getCurrentPeriod = (timetable, testHour = null, testMin = null) => {
 if (currentPeriod) {
   return {
     status: "Ongoing",
+    faculty:currentPeriod.faculty,
     info: (
       <div className="text-start text-dark px-3 py-2">
         <div className="mb-2">
@@ -324,10 +323,6 @@ if (currentPeriod) {
     )
   };
 }
-
-
-
-
   return { status: "Free Period" };
 
 
@@ -339,39 +334,42 @@ if (currentPeriod) {
 };
 
 
-  const handleUpload = async (room) => {
-    // console.log("name");
-    if (!selectedFile || !room) {
-      toast.warn("Please provide class name and upload a file.");
-      return;
-    }
-   
-    const formData = new FormData();
-    formData.append('file', selectedFile);
-    formData.append('className', room);
-    formData.append('blockName', blockname);
+    const handleUpload = async (room) => {
+      
+        if (!selectedFile || !room) {
+          toast.warn("Please provide class name and upload a file.");
+          return;
+        }
+      
+        const formData = new FormData();
+        formData.append('file', selectedFile);
+        formData.append('className', room);
+        formData.append('blockName', blockname);
 
 
-    try {
-      const res = await axios.post('http://localhost:5000/periods/upload', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
+        try {
+          setuploadLoading(true)
+          const res = await axios.post('https://dr-backend-32ec.onrender.com/periods/upload', formData, {
+            headers: { 'Content-Type': 'multipart/form-data' }
+          });
 
 
-      const data = await res.data;
+          const data = await res.data;
 
 
-      fetchTimetables();//update the timetables after uploading new timetable...
+          fetchTimetables();//update the timetables after uploading new timetable...
 
 
-      alert(data.message);
+          alert(data.message);
 
 
-    } catch (err) {
-      console.error(err.response?.data || err.message);
-      alert("Upload failed!");
-    }
-  };
+        } catch (err) {
+          setuploadLoading(false)
+          alert("Upload failed!");
+      }finally{
+        setuploadLoading(false)
+      }
+    };
  
 
 
@@ -381,7 +379,7 @@ if (currentPeriod) {
 
 
   try {
-    await axios.patch(`http://localhost:5000/periods/delete/${blockname}/${className}`);
+    await axios.patch(`https://dr-backend-32ec.onrender.com/periods/delete/${blockname}/${className}`);
     alert("Timetable deleted successfully!");
     fetchTimetables()
   } catch (err) {
@@ -400,9 +398,9 @@ if (currentPeriod) {
       return;
     }
     try {
-      await axios.post(`http://localhost:5000/block/floor/${block?._id}`, { floor_name: floorName });
+      await axios.post(`https://dr-backend-32ec.onrender.com/block/floor/${block?._id}`, { floor_name: floorName });
       setFloorName("");
-      const response = await axios.get(`http://localhost:5000/block/get-data/${block?._id}`);
+      const response = await axios.get(`https://dr-backend-32ec.onrender.com/block/get-data/${block?._id}`);
       setBlock(response.data);
     } catch (error) {
       alert("Failed to add floor");
@@ -431,14 +429,14 @@ if (currentPeriod) {
 
 
       if (dialogType === "floor") {
-        await axios.delete(`http://localhost:5000/block/${block._id}/floor/${floorid._id}`);
+        await axios.delete(`https://dr-backend-32ec.onrender.com/block/${block._id}/floor/${floorid._id}`);
         setFloorid(null);
       } else if (dialogType === "room" && selectedRoom) {
-        await axios.delete(`http://localhost:5000/block/${block._id}/floor/${floorid._id}/room/${selectedRoom._id}`);
+        await axios.delete(`https://dr-backend-32ec.onrender.com/block/${block._id}/floor/${floorid._id}/room/${selectedRoom._id}`);
       }
 
 
-      const updatedData = await axios.get(`http://localhost:5000/block/get-data/${block._id}`);
+      const updatedData = await axios.get(`https://dr-backend-32ec.onrender.com/block/get-data/${block._id}`);
       localStorage.setItem("block", JSON.stringify(updatedData.data));
       setBlock(updatedData.data);
       setRoomData(updatedData.data.floors.find((f) => f._id === floorid?._id)?.rooms || []);
@@ -497,6 +495,10 @@ if (currentPeriod) {
 
   const canEdit = (access === "super_admin") || (access !== "student" && dept.toLowerCase() === block?.block_name?.toLowerCase());
 
+  const handleFloorClick = (floor) => {
+    navigate(`/aitam/${blockname}/${floor._id}/rooms`);
+  };
+
 
   return (
     <Container fluid className="p-4 fs-6">
@@ -514,507 +516,101 @@ if (currentPeriod) {
         </Modal.Footer>
       </Modal>
 
+      
+        <>
+              {/* Fixed Top Navbar-like Header */}
+              <div
+                className="container-fluid px-0 position-fixed top-0 start-0 w-100 shadow-sm"
+                style={{
+                  zIndex: 1050,
+                  background: 'linear-gradient(90deg, #3767cfff 0%, #2575fc 100%)',
+                  borderBottom: '3px solid #0047ab',
+                  color: 'white',
+                }}
+              >
+                <div className="container px-3 py-3">
+                  <Row className="align-items-center justify-content-between">
+                    {/* Title */}
+                    <Col xs={12} md="auto" className="mb-2 mb-md-0 text-center text-md-start">
+                      <h5 className="m-0 fw-bold">
+                        Floor Page for Block: <span className="text-light">{block?.block_name}</span>
+                      </h5>
+                      {err && <p className="text-warning mt-2">{err}</p>}
+                    </Col>
 
-      {/* <Card className="mb-4 bg-light shadow-lg" style={{ fontSize: "1.2rem" }}>
-        <Card.Body>
-          <Card.Title className="text-center text-primary fw-bold fs-4">
-            Floor Page for Block: <span style={{ color: "#333" }}>{block?.block_name}</span>
-          </Card.Title>
-          {err && <p className="text-danger text-center">{err}</p>}
-        </Card.Body>
-      </Card>
-
-
-      <Row className="justify-content-end mb-3">
-        <Col xs="auto">
-          <Button variant="success" onClick={()=>{navigate(`/${blockname}/showtimetable`)}} size="lg">show Timetable</Button>
-        </Col>
-        <Col xs="auto">
-          <Button variant="danger" onClick={backtohome} size="lg">Back to Home</Button>
-        </Col>
-      </Row>
-
-
-      {loading ? (<Loader/>) :
-          (!floorid && (
-            <>
-              {canEdit && (
-                <Row className="justify-content-center mb-4">
-                  <Col xs="auto">
-                    <Form.Control
-                      type="text"
-                      placeholder="Enter floor name"
-                      value={floorName}
-                      onChange={(e) => setFloorName(e.target.value)}
-                    />
-                  </Col>
-                  <Col xs="auto">
-                    <Button variant="primary" onClick={handleAddFloor}>Add Floor</Button>
-                  </Col>
-                </Row>
-              )}
-
-              <Row xs={1} sm={2} md={3} lg={4} className="g-4">
-                {block?.floors?.map((floor, index) => (
-                  <Col key={index}>
-                    <Card
-                      className="text-center border-0 shadow rounded-4 bg-primary-subtle h-100"
-                      style={{ cursor: "pointer" }}
-                      onClick={() => displayRoom(floor)}
-                    >
-                      <Card.Body>
-                        <Card.Title className="fs-6 text-primary fw-bold">{floor.floor_name}</Card.Title>
-                        <Card.Text className="text-muted">{floor.rooms.length} Rooms</Card.Text>
-                      </Card.Body>
-                    </Card>
-                  </Col>
-                ))}
-              </Row>
-            </>
-        ))
-      } */}
-
-    <Card className="mb-4 border-0 bg-white shadow-sm rounded-4 p-3">
-        <Card.Body>
-          <Card.Title className="text-center text-primary fw-bold fs-4">
-            Floor Page for Block: <span className="text-dark">{block?.block_name}</span>
-          </Card.Title>
-          {err && <p className="text-danger text-center">{err}</p>}
-
-          <Row className="justify-content-end mb-3">
-            <Col xs="auto">
-              <Button variant="success" onClick={() => navigate(`/${blockname}/showtimetable`)}>
-                Show Timetable
-              </Button>
-            </Col>
-            <Col xs="auto">
-              <Button variant="outline-danger" onClick={backtohome}>Back to Home</Button>
-            </Col>
-          </Row>
-
-          {loading ? <Loader/>:
-            (
-              <>
-                {!floorid && (
-                <>
-                  {canEdit && (
-                    <Row className="justify-content-center mb-4">
-                      <Col xs="auto">
-                        <Form.Control
-                          type="text"
-                          placeholder="Enter floor name"
-                          value={floorName}
-                          onChange={(e) => setFloorName(e.target.value)}
-                        />
-                      </Col>
-                      <Col xs="auto">
-                        <Button variant="primary" onClick={handleAddFloor}>Add Floor</Button>
-                      </Col>
-                    </Row>
-                  )}
-
-                  <Row xs={1} sm={2} md={3} lg={4} className="g-4">
-                    {block?.floors?.map((floor, index) => (
-                      <Col key={index}>
-                        <Card
-                          className="text-center border-0 shadow rounded-4 bg-primary-subtle h-100"
-                          style={{ cursor: "pointer" }}
-                          onClick={() => displayRoom(floor)}
-                        >
-                          <Card.Body>
-                            <Card.Title className="fs-6 text-primary fw-bold">{floor.floor_name}</Card.Title>
-                            <Card.Text className="text-muted">{floor.rooms.length} Rooms</Card.Text>
-                          </Card.Body>
-                        </Card>
-                      </Col>
-                    ))}
+                    {/* Buttons */}
+                    <Col xs={12} md="auto" className="text-center text-md-end">
+                      {(access!="student") &&
+                        <>
+                          <Button
+                            variant="light"
+                            className="me-2 fw-semibold"
+                            onClick={() => navigate(`/${blockname}/showtimetable`)}
+                          >
+                          Show Timetable
+                          </Button>
+                        </>
+                      }
+                      <Button variant="outline-light" className="fw-semibold" onClick={backtohome}>
+                        Back to Home
+                      </Button>
+                    </Col>
                   </Row>
-                </>
+                </div>
+              </div>
+
+              {/* Content Section with top spacing */}
+              <div style={{ marginTop: '100px' }}>
+                {loading ? (
+                  <Loader /> // Show loader when loading is true
+                ) : (
+                  !floorid && (
+                    <>
+                      {canEdit && (
+                        <Row className="justify-content-center my-4">
+                          <Col xs="auto">
+                            <Form.Control
+                              type="text"
+                              placeholder="Enter floor name"
+                              value={floorName}
+                              onChange={(e) => setFloorName(e.target.value)}
+                            />
+                          </Col>
+                          <Col xs="auto">
+                            <Button variant="primary" onClick={handleAddFloor}>
+                              Add Floor
+                            </Button>
+                          </Col>
+                        </Row>
+                      )}
+
+                      <Row xs={1} sm={2} md={3} lg={4} className="g-4">
+              {block?.floors?.map((floor, index) => (
+                <Col key={index}>
+                  <Card
+                    className="text-center border-0 shadow rounded-4 bg-primary-subtle h-100"
+                    style={{ cursor: "pointer" }}
+                    onClick={() => handleFloorClick(floor)}
+                  >
+                    <Card.Body>
+                      <Card.Title className="fs-6 text-primary fw-bold">
+                        {floor.floor_name}
+                      </Card.Title>
+                      <Card.Text className="text-muted">
+                        {floor.rooms.length} Rooms
+                      </Card.Text>
+                    </Card.Body>
+                  </Card>
+                </Col>
+              ))}
+            </Row>
+                    </>
+                  )
                 )}
-              </>
-            )
-          }
-        </Card.Body>
-      </Card>
+              </div>
 
+       </>
 
-
-      {floorid && (
-        <>
-          <Row className="justify-content-center mb-3">
-            <Col xs="auto">
-              <Form.Control
-                type="text"
-                placeholder="🔍 Search Room"
-                value={roomSearch}
-                onChange={(e) => setRoomSearch(e.target.value)}
-                size="lg"
-                className="rounded-pill shadow-sm px-4"
-                style={{ width: "300px" }}
-              />
-            </Col>
-          </Row>
-
-
-          <Row className="mb-3 align-items-center">
-            <Col>
-              <h5 className="fw-bold">🏢 Rooms in Floor: {floorid.floor_name}</h5>
-            </Col>
-            <Col xs="auto">
-              {canEdit && (
-                <>
-                  <Button className="me-2" size="lg" onClick={addRooms}>➕ Add Room</Button>
-                  <Button variant="danger" size="lg" onClick={confirmDeleteFloor}>🗑️ Delete Floor</Button>
-                </>
-              )}
-              <Button variant="outline-secondary" className="ms-2" size="lg" onClick={backToFloors}>
-                🔙 Back to Floors
-              </Button>
-            </Col>
-          </Row>
-
-
-          <Row className="mb-3">
-            <Col xs="auto">
-              <Form.Select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)} size="lg" className="shadow-sm">
-                <option value="all">All</option>
-                <option value="occupied">Occupied</option>
-                <option value="empty">Empty</option>
-              </Form.Select>
-            </Col>
-          </Row>
-
-
-          {roomdata.length > 0 ? (
-            <Row xs={1} sm={2} md={3} lg={4} className="g-4">
-              {roomdata
-                .filter(room =>
-                  (filterStatus === "all" ||
-                    (filterStatus === "occupied" && room.occupied) ||
-                    (filterStatus === "empty" && !room.occupied)) &&
-                  (filterRoomType === "all" ||
-                    room.room_type.toLowerCase().replace(/\s+/g, '') ===
-                    filterRoomType.replace(/\s+/g, '')) &&
-                  room.room_name.toLowerCase().includes(roomSearch.toLowerCase())
-                )
-                .map((room, index) => {
-                  const timetable = timetableMap[room.room_name] ?? null;
-                  const now = new Date();
-                  const hour = now.getHours();
-                  const minute = now.getMinutes();
-                  const periodinfo = timetable ? getCurrentPeriod(timetable, hour, minute) : null;
-
-
-                  return (
-                    <Col key={index}>
-                      <Card
-                        className="shadow-sm h-100 border-0"
-                        style={{
-                          backgroundColor: room.occupied ? "#f8d7da" : "#d4edda",
-                          cursor: "pointer",
-                        }}
-                        onClick={() => handleCardClick(index)}
-                      >
-                        <Card.Body className="d-flex flex-column justify-content-center text-center">
-                          <div>
-                            <div className="d-flex justify-content-center align-items-center mb-2">
-                              <i
-                                className={`bi ${room.occupied ? "bi-lock-fill" : "bi-unlock"}`}
-                                style={{
-                                  fontSize: "1.2rem",
-                                  color: room.occupied ? "red" : "green",
-                                  marginRight: "0.5rem",
-                                }}
-                              ></i>
-                              <strong className="text-truncate" style={{ maxWidth: "150px" }}>
-                                {room.room_name}
-                              </strong>
-                            </div>
-                            <small className="text-muted text-truncate">ID: {room.room_id}</small>
-                          </div>
-                        </Card.Body>
-                      </Card>
-
-
-                      {/* Modal for room details */}
-                      <Modal show={expandedRoom === index} onHide={closeModal} centered>
-                        <Modal.Header closeButton>
-                          <Modal.Title>{room.room_name}</Modal.Title>
-                        </Modal.Header>
-                        <Modal.Body>
-                          {timetable ? (
-                            <p className="text-center">
-                              {periodinfo.status === "Ongoing" ? (
-                                <span className="text-success fw-bold">{periodinfo.info}</span>
-                              ) : (
-                                <span className="text-muted">{periodinfo.status}</span>
-                              )}
-                            </p>
-                          ) : (
-                            <>
-                              <p><strong>ID:</strong> {room.room_id}</p>
-                              <p><strong>Type:</strong> {room.room_type}</p>
-                              <p><strong>Capacity:</strong> {room.room_capacity}</p>
-                              <p><strong>Status:</strong> {room.occupied ? "Occupied" : "Empty"}</p>
-                              <p><strong>Last Modified:</strong> {formatDistanceToNow(new Date(room.lastModifiedDate), { addSuffix: true })}</p>
-                            </>
-                          )}
-
-
-                          {canEdit && (
-                            <div className="mt-3">
-                              {!timetable && (
-                                <>
-                                  <input type="file" onChange={handleFileUpload} className="form-control mb-2" />
-                                  <Button
-                                    size="sm"
-                                    variant="success"
-                                    onClick={() => handleUpload(room.room_name)}
-                                    className="mb-2 w-100"
-                                  >
-                                    Upload Timetable
-                                  </Button>
-                                </>
-                              )}
-
-
-                              {!timetable ? (
-                                <div className="d-flex justify-content-between">
-                                  <Button size="sm" variant="info" onClick={() => modifyRoom(room)}>Modify</Button>
-                                  <Button size="sm" variant="danger" onClick={() => confirmDeleteRoom(room)}>Delete</Button>
-                                </div>
-                              ) : (
-                                <div className="d-flex justify-content-between">
-                                  <Button size="sm" variant="danger" onClick={() => deleteTimetableByClass(room.room_name)}>Remove Timetable</Button>
-                                  <Button size="sm" variant="danger" onClick={() => confirmDeleteRoom(room)}>Delete Room</Button>
-                                </div>
-                              )}
-                            </div>
-                          )}
-                        </Modal.Body>
-                      </Modal>
-                    </Col>
-                  );
-                })}
-            </Row>
-          ) : (
-            <p className="text-center mt-4">No rooms found.</p>
-          )}
-        </>
-      )}
-
-
-     
-      {/* `{floorid && (
-        <>
-          <Row className="justify-content-center mb-3">
-            <Col xs="auto">
-              <Form.Control
-                type="text"
-                placeholder="🔍 Search Room"
-                value={roomSearch}
-                onChange={(e) => setRoomSearch(e.target.value)}
-                size="lg"
-                className="rounded-pill px-4 shadow-sm"
-                style={{ width: "300px" }}
-              />
-            </Col>
-          </Row>
-
-
-          <Row className="mb-3 align-items-center">
-            <Col>
-              <h5 className="fw-bold">🏢 Rooms in Floor: {floorid.floor_name}</h5>
-            </Col>
-            <Col xs="auto">
-              {canEdit && (
-                <>
-                  <Button
-                    variant="primary"
-                    className="me-2 shadow-sm"
-                    size="lg"
-                    onClick={addRooms}
-                  >
-                    ➕ Add Room
-                  </Button>
-                  <Button
-                    variant="danger"
-                    className="shadow-sm"
-                    size="lg"
-                    onClick={confirmDeleteFloor}
-                  >
-                    🗑️ Delete Floor
-                  </Button>
-                </>
-              )}
-              <Button
-                variant="outline-secondary"
-                className="ms-2 shadow-sm"
-                size="lg"
-                onClick={backToFloors}
-              >
-                🔙 Back to Floors
-              </Button>
-            </Col>
-          </Row>
-
-
-          <Row className="mb-3">
-            <Col xs="auto">
-              <Form.Select
-                value={filterStatus}
-                onChange={(e) => setFilterStatus(e.target.value)}
-                size="lg"
-                className="shadow-sm"
-              >
-                <option value="all">All</option>
-                <option value="occupied">Occupied</option>
-                <option value="empty">Empty</option>
-              </Form.Select>
-            </Col>
-          </Row>
-
-
-          {roomdata.length > 0 ? (
-            <Row xs={1} sm={2} md={3} lg={4} className="g-4">
-              {roomdata
-                .filter(room =>
-                  (filterStatus === "all" ||
-                    (filterStatus === "occupied" && room.occupied) ||
-                    (filterStatus === "empty" && !room.occupied)) &&
-                  (filterRoomType === "all" ||
-                    room.room_type.toLowerCase().replace(/\s+/g, '') ===
-                    filterRoomType.replace(/\s+/g, '')) &&
-                  room.room_name.toLowerCase().includes(roomSearch.toLowerCase())
-                )
-                .map((room, index) => {
-                  const timetable = timetableMap[room.room_name] ?? null;
-                  let periodinfo = null;
-
-
-                  if (timetable) {
-                    const now = new Date();
-                    const hour = now.getHours();
-                    const minute = now.getMinutes();
-                    periodinfo = getCurrentPeriod(timetable, hour, minute);
-                  }
-
-
-                  const isExpanded = expandedRoom === index;
-                  const cardOpacity = expandedRoom !== null && expandedRoom !== index ? 0.4 : 1;
-
-
-                  return (
-                    <Col key={index}>
-                      <Card
-                        className="shadow-sm border-0 rounded"
-                        style={{
-                          backgroundColor: room.occupied ? "#f8d7da" : "#d4edda",
-                          opacity: cardOpacity,
-                          transition: "all 0.3s ease-in-out",
-                          cursor: "pointer",
-                          padding: "0.75rem",
-                        }}
-                        onClick={() => setExpandedRoom(isExpanded ? null : index)}
-                      >
-                        <Card.Body className="p-2">
-                          <div className="d-flex justify-content-between align-items-center">
-                            <h6 className="fw-bold mb-1">{room.room_name}</h6>
-                            <i
-                              className={`bi ${room.occupied ? "bi-lock-fill" : "bi-unlock"}`}
-                              style={{
-                                fontSize: "1.2rem",
-                                color: room.occupied ? "red" : "green",
-                              }}
-                            ></i>
-                          </div>
-                          <small className="text-muted">ID: {room.room_id}</small>
-
-
-                          {isExpanded && (
-                            <div className="mt-2" style={{ fontSize: "0.85rem" }}>
-                              {timetable ? (
-                                <>
-                                  {periodinfo.status === "Ongoing" ? (
-                                    <Card.Text className="text-success text-center fw-semibold">
-                                      {periodinfo.info}
-                                    </Card.Text>
-                                  ) : (
-                                    <Card.Text className="text-muted text-center">
-                                      {periodinfo.status}
-                                    </Card.Text>
-                                  )}
-                                </>
-                              ) : (
-                                <>
-                                  <Card.Text><strong>Type:</strong> {room.room_type}</Card.Text>
-                                  <Card.Text><strong>Capacity:</strong> {room.room_capacity}</Card.Text>
-                                  <Card.Text><strong>Status:</strong> {room.occupied ? "Occupied" : "Empty"}</Card.Text>
-                                  <Card.Text>
-                                    <strong>Last Modified:</strong>{" "}
-                                    {formatDistanceToNow(new Date(room.lastModifiedDate), { addSuffix: true })}
-                                  </Card.Text>
-                                </>
-                              )}
-
-
-                              {canEdit && (
-                                <div className="mt-2">
-                                  {!timetable && (
-                                    <>
-                                      <input
-                                        type="file"
-                                        onChange={handleFileUpload}
-                                        className="form-control mb-2"
-                                      />
-                                      <Button
-                                        size="sm"
-                                        variant="success"
-                                        onClick={() => handleUpload(room.room_name)}
-                                        className="mb-2 w-100"
-                                      >
-                                        Upload
-                                      </Button>
-                                    </>
-                                  )}
-
-
-                                  <Card.Footer className="d-flex justify-content-between p-1 bg-transparent border-0">
-                                    {!timetable ? (
-                                      <>
-                                        <Button size="sm" variant="info" onClick={() => modifyRoom(room)}>
-                                          Modify
-                                        </Button>
-                                        <Button size="sm" variant="danger" onClick={() => confirmDeleteRoom(room)}>
-                                          Delete
-                                        </Button>
-                                      </>
-                                    ) : (
-                                      <>
-                                        <Button size="sm" variant="danger" onClick={() => deleteTimetableByClass(room.room_name)}>
-                                          Remove Timetable
-                                        </Button>
-                                        <Button size="sm" variant="danger" onClick={() => confirmDeleteRoom(room)}>
-                                          Delete Room
-                                        </Button>
-                                      </>
-                                    )}
-                                  </Card.Footer>
-                                </div>
-                              )}
-                            </div>
-                          )}
-                        </Card.Body>
-                      </Card>
-                    </Col>
-                  );
-                })}
-            </Row>
-          ) : (
-            <p className="text-center mt-4">No rooms found.</p>
-          )}
-        </>
-      )}` */}
     </Container>
   );
 };

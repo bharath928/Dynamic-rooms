@@ -14,18 +14,19 @@ const Roomform = () => {
   const navigate = useNavigate();
 
   const { state } = useLocation();
-  const [floor, setFloorId] = useState(state.floor);
-  const [Block, setBlockId] = useState(state.Block);
-
+  const [floorId, setFloorId] = useState(state.floor);
+  const [BlockId, setBlockId] = useState(state.Block);
+  const [blockname,setBlockName] = useState(state.BlockName);
+  const [floorName,setFloorName] = useState(state.floorname);
   useEffect(() => {
-    setRoomId(floor.floor_name);
-  }, [floor.floor_name]);
+    setRoomId(floorName);
+  }, [floorName]);
 
   const handleAddRoom = async (e) => {
     e.preventDefault();
     try {
       await axios.post(
-        `http://localhost:5000/block/floors/room/${Block._id}/${floor._id}`,
+        `http://localhost:5000/block/floors/room/${BlockId}/${floorId}`,
         {
           room_id: roomId,
           room_name: roomName,
@@ -41,7 +42,7 @@ const Roomform = () => {
       setRoomOccupied(false);
 
       alert("Room successfully added.");
-      navigate(`/aitam/${Block.block_name}`, { state: { block: Block } });
+      navigate(`/aitam/${blockname}/${floorId}/rooms`, { state: { block: blockname } });
     } catch (error) {
       setErr("Failed to add room");
       console.error(error);
@@ -53,8 +54,8 @@ const Roomform = () => {
   };
 
   const backhandler = () => {
-    navigate(`/aitam/${Block.block_name}`, {
-      state: { block: Block, from: "modify-room" }, 
+    navigate(`/aitam/${blockname}/${floorId}/rooms`, {
+      state: { block: blockname, from: "modify-room" }, 
       replace: true,
     });
   };
@@ -69,7 +70,7 @@ const Roomform = () => {
         type="text"
         className="room-input"
         value={roomId+"-"}
-        onChange={(e) => setRoomId(e.target.value)}
+        onChange={(e) => setRoomId(e.target.value.trim())}
         placeholder="Enter room Id"
         required
       />
@@ -77,7 +78,7 @@ const Roomform = () => {
         type="text"
         className="room-input"
         value={roomName}
-        onChange={(e) => setRoomName(e.target.value)}
+        onChange={(e) => setRoomName(e.target.value.trim())}
         placeholder="Enter room name"
         required
       />
@@ -85,7 +86,7 @@ const Roomform = () => {
         type="text"
         className="room-input"
         value={roomType}
-        onChange={(e) => setRoomType(e.target.value)}
+        onChange={(e) => setRoomType(e.target.value.trim())}
         placeholder="Enter room type"
         required
       />
@@ -93,7 +94,7 @@ const Roomform = () => {
         type="number"
         className="room-input"
         value={roomCapacity}
-        onChange={(e) => setRoomCapacity(Number(e.target.value))}
+        onChange={(e) => setRoomCapacity(Number(e.target.value.trim()))}
         placeholder="Enter room capacity"
         required
       />

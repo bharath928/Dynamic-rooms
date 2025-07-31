@@ -24,7 +24,7 @@ const Register = () => {
     useEffect(() => {
         const fetch = async () => {
             try {
-                const details = await axios.get("http://localhost:5000/block/get-data");
+                const details = await axios.get("https://dr-backend-32ec.onrender.com/block/get-data");
                 setBlockNames(details.data);
             } catch (err) {
                 alert(err.message);
@@ -44,7 +44,7 @@ const Register = () => {
         const token = localStorage.getItem("token");
         setLoading(true)
         try {
-            const response = await fetch("http://localhost:5000/auth/register", {
+            const response = await fetch("https://dr-backend-32ec.onrender.com/auth/register", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -131,7 +131,6 @@ const Register = () => {
             <>
               <option value="">Select the role</option>
               <option value="admin">ADMIN</option>
-              <option value="cr">CR</option>
             </>
         </select>
       </div>

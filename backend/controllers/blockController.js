@@ -136,7 +136,9 @@ const deleteFloor = async(req,res)=>{
 
 const addroomDetails = async (req, res) => {
     try {
+        console.log("addroomDetails")
         const { blockid, floorid } = req.params;
+        console.log(blockid,floorid)
         const { room_id, room_name, room_type, room_capacity, occupied } = req.body; // ✅ Include occupied field
 
         const blockDetails = await block.findById(blockid);
@@ -165,7 +167,7 @@ const addroomDetails = async (req, res) => {
 
 const updateRoomDetails = async (req, res) => {
     try {
-        console.log("backend updated")
+        
         const { blockid, floorid, roomid } = req.params;
         const { room_id, room_name, room_type, room_capacity, occupied } = req.body; // ✅ Include occupied field
 
@@ -247,4 +249,26 @@ const blockStatus = async(req,res)=>{
 }
 
 
-module.exports = {createBlock,getBlockDetails,getBlockDetailsbyId,getBlockDetailsbyName,deleteBlock,updateBlockDetailsbyId,addroomDetails,updateRoomDetails,deleteFloor,deleteRoom,modifyBlock,blockStatus}
+const getFloorDetails = async (req, res) => {
+  const {blockname,floorId } = req.params;
+
+  try {
+    const foundBlock = await block.findOne({ "block_name": blockname });
+
+    if (!foundBlock) {
+      return res.status(404).json({ message: 'Block not found' });
+    }
+
+    const floor = foundBlock.floors.find((f) => f._id.toString() === floorId);
+    if (!floor) {
+      return res.status(404).json({ message: 'Floor not found in the specified block' });
+    }
+
+    res.status(200).json(floor);
+  } catch (error) {
+    console.error('Error fetching floor:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+module.exports = {createBlock,getBlockDetails,getBlockDetailsbyId,getBlockDetailsbyName,deleteBlock,updateBlockDetailsbyId,addroomDetails,updateRoomDetails,deleteFloor,deleteRoom,modifyBlock,blockStatus,getFloorDetails}

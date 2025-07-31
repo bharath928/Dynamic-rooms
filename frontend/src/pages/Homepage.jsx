@@ -52,7 +52,7 @@ const Homepage = ({footerHeight}) => {
     
     const fetchDetails = async () => {
       try {
-        const details = await axios.get("http://localhost:5000/block/get-data");
+        const details = await axios.get("https://dr-backend-32ec.onrender.com/block/get-data");
         setBlock(details.data);
         const allRooms = details.data.flatMap(block => 
           block.floors.flatMap(floor => floor.rooms)
@@ -106,7 +106,7 @@ const Homepage = ({footerHeight}) => {
         toast.warn("Block name cannot be empty!");
         return;
       }
-      await axios.put(`http://localhost:5000/block/update-data/${e._id}`, {
+      await axios.put(`https://dr-backend-32ec.onrender.com/block/update-data/${e._id}`, {
         "new_block": block_name
       });
       toast.success(`Block modified successfully to ${block_name}`);
@@ -143,10 +143,14 @@ const Homepage = ({footerHeight}) => {
   const deleteBlock = async (e) => {
     try {
       if (window.confirm(`Are you sure you want to delete ${e.block_name}?`)) {
-        await axios.delete(`http://localhost:5000/block/delete-data/${e._id}`);
+        await axios.delete(`https://dr-backend-32ec.onrender.com/block/delete-data/${e._id}`);
         toast.success(`${e.block_name} has been deleted successfully`);
+
+        //Remove the Block's timetable from the data Base..
+        await axios.delete(`https://dr-backend-32ec.onrender.com/periods/delete/${e.block_name}`)
         
-        const details = await axios.get("http://localhost:5000/block/get-data");
+        //Update the block data...
+        const details = await axios.get("https://dr-backend-32ec.onrender.com/block/get-data");
         setBlock(details.data);
       }
     } catch (err) {
@@ -174,116 +178,162 @@ const Homepage = ({footerHeight}) => {
   };
 
   return (
-  <>
-    {/* Fixed Header */}
-    <div style={{
-      background: 'linear-gradient(90deg,#0066cc,#003366)',
-      padding: '12px 0',
-      position: 'fixed',
-      top: 0,
-      left: 0,
-      width: '100%',
-      zIndex: 1000,
-      boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)'
-    }}>
-      <div className="container-fluid">
-        <div className="d-flex align-items-center justify-content-between flex-wrap w-100">
-
-          {/* Logo */}
-          <div>
-            <img
-              src="logo2.webp"
-              alt="Logo"
-              style={{
-                height: '55px',
-                width: 'auto',
-                marginLeft: '10px',
-                borderRadius: '10px',
-                boxShadow: '0 1px 6px rgba(255,255,255,0.1)'
-              }}
-            />
-          </div>
-
-          {/* Title */}
-          <h3 className="m-0 text-white text-center flex-grow-1"
-            style={{
-              fontSize: 'clamp(1.4rem, 2vw, 2rem)',
-              fontWeight: '600',
-              letterSpacing: '0.5px',
-              textShadow: '0 1px 3px rgba(0,0,0,0.3)'
-            }}
-          >
-            AITAM Digital Room Management Portal
-          </h3>
-
-          {/* Right Controls (Search + Hamburger) */}
-          <div className="d-flex align-items-center justify-content-between w-100 mt-2 mt-md-0 flex-wrap"
-     style={{ maxWidth: '100%', gap: '10px' }}
+   <>
+  {/* Header/Navbar - Fixed */}
+  <div
+  style={{
+    background: 'linear-gradient(90deg,#0066cc,#003366)',
+    padding: '12px 0',
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    width: '100%',
+    zIndex: 1000,
+    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)',
+  }}
 >
-  {/* Search */}
-  <div style={{ flex: '1' }}>
-    <input
-      type="search"
-      className="form-control"
-      placeholder="Search Rooms..!"
-      onChange={(e) => handleSearch(e)}
+  <div className="container-fluid">
+    <div
+      className="d-flex flex-column flex-md-row align-items-center justify-content-between"
       style={{
-        backgroundColor: '#f0f0f0',
-        border: '1px solid #ccc',
-        borderRadius: '6px',
-        fontSize: '0.95rem',
-        width: '100%'
-      }}
-    />
-  </div>
-
-  {/* Hamburger */}
-  <div className="position-relative" ref={menuRef} style={{ marginLeft: 'auto' }}>
-    <button className="btn btn-outline-light"
-      onClick={() => setShowMenu(!showMenu)}
-      style={{
-        borderRadius: '6px',
-        padding: '6px 12px',
-        fontWeight: 'bold',
-        backgroundColor: '#0056b3',
-        color: 'white',
-        border: 'none'
+        flexWrap: 'wrap',
+        rowGap: '10px',
+        padding: '0 10px',
       }}
     >
-      ☰
-    </button>
-    {showMenu && (
-                <ul className="dropdown-menu show position-absolute end-0 mt-2"
-                  style={{
-                    minWidth: '180px',
-                    borderRadius: '10px',
-                    boxShadow: '0 4px 16px rgba(0,0,0,0.15)'
-                  }}
-                >
-                  {access === 'super_admin' && (
-                    <li><button className="dropdown-item text-primary" onClick={() => navigate('/aitam')}>Add Block</button></li>
-                  )}
-                  {access !== 'student' && (
-                    <li><button className="dropdown-item text-success" onClick={handleRegisterUser}>Register</button></li>
-                  )}
-                  {access === 'super_admin' && (
-                    <li><button className="dropdown-item text-primary" onClick={dashboardHandler}>Dashboard</button></li>
-                  )}
-                  <li><button className="dropdown-item text-warning" onClick={roomsOverview}>Rooms Overview</button></li>
-                  <li><button className="dropdown-item text-success" onClick={() => navigate('/findFaculty')}>Find Faculty</button></li>
-                  <li><button className="dropdown-item text-danger" onClick={handleSignOut}>Sign Out</button></li>
-                </ul>
-              )}
-  </div>
-</div>
+      {/* Logo */}
+      <div style={{ flexShrink: 0 }}>
+        <img
+          src="logo2.webp"
+          alt="Logo"
+          style={{
+            height: '55px',
+            width: 'auto',
+            borderRadius: '10px',
+            boxShadow: '0 1px 6px rgba(255,255,255,0.1)',
+          }}
+        />
+      </div>
 
+      {/* Title */}
+      <h3
+        className="text-white text-center m-0"
+        style={{
+          fontSize: 'clamp(1.3rem, 2.2vw, 2rem)',
+          fontWeight: '600',
+          letterSpacing: '0.5px',
+          textShadow: '0 1px 3px rgba(0,0,0,0.3)',
+          flexGrow: 1,
+        }}
+      >
+        AITAM Digital Room Management Portal
+      </h3>
+
+      {/* Search and Hamburger Container */}
+      <div
+        className="d-flex align-items-center justify-content-end flex-nowrap gap-2"
+        style={{ flex: '0 0 auto', marginRight: '10px' }}
+      >
+        {/* Search input */}
+        <div style={{ maxWidth: '260px', width: '100%' }}>
+          <input
+            type="search"
+            className="form-control"
+            placeholder="Search Rooms..!"
+            onChange={(e) => handleSearch(e)}
+            style={{
+              backgroundColor: '#f0f0f0',
+              border: '1px solid #ccc',
+              borderRadius: '6px',
+              fontSize: '0.95rem',
+            }}
+          />
+        </div>
+
+        {/* Hamburger menu */}
+        <div className="position-relative" ref={menuRef}>
+          <button
+            className="btn btn-outline-light"
+            onClick={() => setShowMenu(!showMenu)}
+            style={{
+              borderRadius: '6px',
+              padding: '6px 12px',
+              fontWeight: 'bold',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            ☰
+          </button>
+          {showMenu && (
+            <ul
+              className="dropdown-menu show position-absolute end-0 mt-2"
+              style={{
+                minWidth: '180px',
+                borderRadius: '10px',
+                boxShadow: '0 4px 16px rgba(0,0,0,0.15)',
+              }}
+            >
+              {access === 'super_admin' && (
+                <li>
+                  <button className="dropdown-item text-primary" onClick={() => navigate('/aitam')}>
+                    Add Block
+                  </button>
+                </li>
+              )}
+              {access !== 'student' && (
+                <li>
+                  <button className="dropdown-item text-success" onClick={handleRegisterUser}>
+                    Register
+                  </button>
+                </li>
+              )}
+              {access === 'super_admin' && (
+                <li>
+                  <button className="dropdown-item text-primary" onClick={dashboardHandler}>
+                    Dashboard
+                  </button>
+                </li>
+              )}
+              <li>
+                <button className="dropdown-item text-warning" onClick={roomsOverview}>
+                  Rooms Overview
+                </button>
+              </li>
+              <li>
+                <button className="dropdown-item text-success" onClick={() => navigate('/findFaculty')}>
+                  Find Faculty
+                </button>
+              </li>
+               {access !== 'student' && (
+                <li>
+                  <a
+                    className="dropdown-item text-info"
+                    href="/sample-timetable.xlsx"
+                    download
+                  >
+                    Download Timetable
+                  </a>
+            </li>
+              )}
+              <li>
+                <button className="dropdown-item text-danger" onClick={handleSignOut}>
+                  Sign Out
+                </button>
+              </li>
+             
+
+            </ul>
+          )}
         </div>
       </div>
     </div>
+  </div>
+</div>
 
 
-    {/* Main Content with Padding */}
-    <div style={{ paddingTop: '150px', paddingInline: '12px' }}>
+
+  {/* Content Below Fixed Navbar */}
+  <div style={{ paddingTop: '150px', paddingInline: '12px' }}>
       {/* Search Results */}
         {searchTerm !== '' && (
     <div
@@ -386,8 +436,9 @@ const Homepage = ({footerHeight}) => {
         </div>
       )}
     </div>
-  </>
-);
+</>
 
+
+  );
 }
 export default Homepage;

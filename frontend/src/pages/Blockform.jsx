@@ -11,7 +11,7 @@ const Blockform = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("http://localhost:5000/block/add-data", {
+      await axios.post("https://dr-backend-32ec.onrender.com/block/add-data", {
         block_name: blockName,
       });
       navigate("/");
