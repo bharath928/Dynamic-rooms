@@ -18,6 +18,7 @@ const DaySchema = new mongoose.Schema({
 // Timetable Schema (for one room)
 const RoomTimetableSchema = new mongoose.Schema({
   className: { type: String, required: true },       // Room101, Room102, etc.
+  isPaused:{type:Boolean,default:false},
   timetableData: [DaySchema]                        // Weekly timetable for the room
 });
 

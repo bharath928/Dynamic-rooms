@@ -21,6 +21,10 @@ import TimetableMonday from "./pages/FloorTimetableOverview.jsx";
 import FindFaculty from "./pages/FindFaculty.jsx";
 import Roomspage from "./pages/Roomspage.jsx";
 import AdminLogin from "./pages/AdminLogin.jsx";
+import SuperAdminNoticePage from "./pages/SuperAdminNoticePage.jsx";
+import ContactPage from "./pages/ContactPage.jsx";
+import AboutPage from "./pages/AboutPage";
+
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(!!sessionStorage.getItem("token"));
@@ -87,6 +91,9 @@ const App = () => {
               <Route path="/:blockname/showtimetable" element={<ProtectedRoute><TimetableMonday /></ProtectedRoute>} />
               
               <Route path="/findFaculty" element={<ProtectedRoute><FindFaculty /></ProtectedRoute>} />
+              <Route path="globalNotice" element={<ProtectedRoute><SuperAdminNoticePage /></ProtectedRoute>}/>
+              <Route path="/contact" element={<ContactPage />} />
+              <Route path="/about" element={<AboutPage />} />
     
             </>
           ) : (

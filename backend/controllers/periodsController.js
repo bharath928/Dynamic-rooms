@@ -126,6 +126,26 @@ const getTimetables = async (req, res) => {
   }
 };
 
+const pauseActivity = async(req,res)=>{
+  try{
+    const { blockName, className } = req.params;
+    const {isPaused} = req.body
+
+    const response =await Timetable.updateOne(
+      {blockName,"rooms.className":className},
+      {$set:{"rooms.$.isPaused":isPaused}}
+    )
+
+    if (response.modifiedCount === 0) {
+      return res.status(404).json({ message: "Room not found or already set" });
+    }
+
+    res.status(200).json({ message: `Timetable ${isPaused ? 'paused' : 'resumed'} successfully` });
+  }catch(err){
+    res.status(500).json({ msg: err.message });
+  }
+}
+
 const deleteTimetable = async (req, res) => {
   try {
     const { blockName, className } = req.params;
@@ -172,4 +192,4 @@ const deleteblockTimetable = async(req,res)=>{
   }
 }
 
-module.exports = { uploadTimetableFromExcel,getTimetables,deleteTimetable,getAllTimetables,deleteblockTimetable};
+module.exports = { uploadTimetableFromExcel,getTimetables,pauseActivity,deleteTimetable,getAllTimetables,deleteblockTimetable};

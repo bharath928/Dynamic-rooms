@@ -15,9 +15,9 @@ const testUserModel = async () => {
     try {
         // Create a test user
         const newUser = new User({
-            userId: "22A51A05F7",
-            password: "bharath5f7",
-            role: "super_admin" // Change this to "super_admin" or "user" to test
+            userId: "DCR",
+            password: "DCR",
+            role: "super_admin" 
         });
 
         // Save user to the database

@@ -16,28 +16,17 @@ const TimetableMonday = () => {
     fetchTimetables();
   }, []);
 
-
-  // const fetchTimetables = async () => {
-  //   try {
-  //     setLoading(true);
-  //     const { data } = await axios.get(`https://dr-backend-32ec.onrender.com/periods/blockTimetables/${blockname}`);
-  //     setTimetables(data);
-  //   } catch (err) {
-  //     console.log(err.message);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
   const fetchTimetables = async () => {
   try {
     setLoading(true);
     const { data } = await axios.get(`https://dr-backend-32ec.onrender.com/periods/blockTimetables/${blockname}`);
-
+    // console.log(data)
     // Sort by className alphabetically
     data.sort((a, b) => a.className.localeCompare(b.className, undefined, { numeric: true, sensitivity: 'base' }));
 
     setTimetables(data);
+    const response = fetchOngoingClasses(data)
+    console.log(response)
   } catch (err) {
     console.log(err.message);
   } finally {
@@ -52,6 +41,55 @@ const TimetableMonday = () => {
     const dayData = cls.timetableData.find(day => day.dayName === today);
     return !dayData || dayData.periods.length === 0;
   });
+
+  //For displaying the current period.....
+  const isCurrentPeriod = (start, end) => {
+  const now = new Date();
+
+  const parseTime = (timeStr) => {
+    const [time, modifier] = timeStr.split(' ');
+    let [hours, minutes] = time.split(':').map(Number);
+
+    if (modifier === 'PM' && hours !== 12) hours += 12;
+    if (modifier === 'AM' && hours === 12) hours = 0;
+
+    return { hours, minutes };
+  };
+
+  const startTime = parseTime(start);
+  const endTime = parseTime(end);
+
+  const startDate = new Date();
+  startDate.setHours(startTime.hours, startTime.minutes, 0);
+
+  const endDate = new Date();
+  endDate.setHours(endTime.hours, endTime.minutes, 0);
+
+  return now >= startDate && now <= endDate;
+};
+
+
+  const fetchOngoingClasses = (data) => {
+  const today = new Date().toLocaleString('en-US', { weekday: 'long' });
+
+  return data.flatMap((cls) => {
+    const todayData = cls.timetableData.find((d) => d.dayName === today);
+    if (!todayData) return [];
+
+    // Find periods currently ongoing
+    const ongoingPeriods = todayData.periods.filter((p) =>
+      isCurrentPeriod(p.startTime, p.endTime)
+    );
+
+    return ongoingPeriods.map((p) => ({
+      className: cls.className,
+      subject: p.subject,
+      faculty: p.faculty,
+      time: `${p.startTime} - ${p.endTime}`,
+    }));
+  });
+};
+
 
 
   return (
@@ -99,8 +137,6 @@ const TimetableMonday = () => {
                         }
                       });
                     }
-
-
                     return (
                       <tr key={cls._id}>
                         <th scope="row" className="fw-semibold text-primary">{cls.className}</th>

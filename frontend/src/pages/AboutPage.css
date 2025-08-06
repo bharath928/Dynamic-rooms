@@ -1,0 +1,28 @@
+.hero-section {
+  background: linear-gradient(to right, #0047ab, #2575fc);
+  padding: 100px 0 60px;
+}
+
+.section-title {
+  font-size: 2.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.section-description {
+  font-size: 1.1rem;
+  max-width: 750px;
+  margin: auto;
+  color: #555;
+}
+
+.value-icon {
+  font-size: 2rem;
+  color: #0047ab;
+}
+
+footer {
+  background-color: #0047ab;
+  color: white;
+  padding: 20px 0;
+}

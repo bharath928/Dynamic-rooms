@@ -19,7 +19,7 @@ const Roomform = () => {
   const [blockname,setBlockName] = useState(state.BlockName);
   const [floorName,setFloorName] = useState(state.floorname);
   useEffect(() => {
-    setRoomId(floorName);
+    setRoomId(floorName+"-");
   }, [floorName]);
 
   const handleAddRoom = async (e) => {
@@ -28,9 +28,9 @@ const Roomform = () => {
       await axios.post(
         `http://localhost:5000/block/floors/room/${BlockId}/${floorId}`,
         {
-          room_id: roomId,
-          room_name: roomName,
-          room_type: roomType,
+          room_id: roomId.trim(),
+          room_name: roomName.trim(),
+          room_type: roomType.trim(),
           room_capacity: roomCapacity,
           occupied: roomOccupied, 
         }
@@ -69,8 +69,8 @@ const Roomform = () => {
       <input
         type="text"
         className="room-input"
-        value={roomId+"-"}
-        onChange={(e) => setRoomId(e.target.value.trim())}
+        value={roomId}
+        onChange={(e) => setRoomId(e.target.value)}
         placeholder="Enter room Id"
         required
       />
@@ -78,7 +78,7 @@ const Roomform = () => {
         type="text"
         className="room-input"
         value={roomName}
-        onChange={(e) => setRoomName(e.target.value.trim())}
+        onChange={(e) => setRoomName(e.target.value)}
         placeholder="Enter room name"
         required
       />
@@ -86,7 +86,7 @@ const Roomform = () => {
         type="text"
         className="room-input"
         value={roomType}
-        onChange={(e) => setRoomType(e.target.value.trim())}
+        onChange={(e) => setRoomType(e.target.value)}
         placeholder="Enter room type"
         required
       />
@@ -94,7 +94,7 @@ const Roomform = () => {
         type="number"
         className="room-input"
         value={roomCapacity}
-        onChange={(e) => setRoomCapacity(Number(e.target.value.trim()))}
+        onChange={(e) => setRoomCapacity(Number(e.target.value))}
         placeholder="Enter room capacity"
         required
       />
